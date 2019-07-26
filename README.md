@@ -1,28 +1,17 @@
 # OpenMBIR
+## BASELINE MBIR RECONSTRUCTION SOFTWARE FOR 2D and 3DPARALLEL-BEAM  CT
+## Purdue University
 
-********************************************************************************
-*     BASELINE MBIR RECONSTRUCTION SOFTWARE FOR 2D and 3DPARALLEL-BEAM  CT     *
-*                          Purdue University                                   *
-********************************************************************************
-
-======================
-HARDWARE REQUIREMENT :
-======================
-
+HARDWARE REQUIREMENT:
    RAM requirement is 128MB for a quick demo (“Demo_Fast.sh” Shepp-Logan Phantom Data)
    RAM requirement is 4GB or a slow demo,  run the script “Demo_Slow.sh” (FeOOH Data)
 
-======================
-SOFTWARE REQUIREMENT :
-======================
-
+SOFTWARE REQUIREMENT:
   Operating system: Microsoft Windows, Mac OS X, Linux.  
   Compiler: GCC compiler.
   MATLAB
 
-================
-INSTRUCTIONS :
-================
+INSTRUCTIONS:
 
 1) Compile the code-package : 
 
