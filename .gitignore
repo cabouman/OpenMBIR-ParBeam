@@ -27,6 +27,8 @@
 *.i*86
 *.x86_64
 *.hex
+SourceCode/2D/Generate_SystemMatrix/GenerateSystemMatrix2D
+SourceCode/2D/MBIR/MBIR_2DCT
 
 # Debug files
 *.dSYM/
