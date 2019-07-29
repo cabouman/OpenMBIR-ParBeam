@@ -15,12 +15,11 @@
 1) Compile the code-package:
    Run the scripts “Compile/2D/Compile.sh" and "Compile/3D/Compile.sh" to compile the 2D and 3D code packages. 
    
-2) Execute the script on sample data sets:
-   (a) For a quick demo, run the script “Demo_Fast.sh” under “Demo/<2D or 3D>” (2D - Shepp-Logan Phantom Data and 3D - FeOOH Data)
-   (b) For a slow demo,  run the script “Demo_Slow.sh” under “Demo/<2D or 3D>” (2D - 2 slices of FeOOH Data   and 3D - 16 slices of FeOOH Data)  
+2) Run demos:
+   (a) For fast demo, run the scripts “Demo/2D/Demo_Fast.sh" or “Demo/3D/Demo_Fast.sh".
+   (b) For slow demo, run the scripts “Demo/2D/Demo_Slow.sh” or “Demo/3D/Demo_Slow.sh”.
 
 3) Display the result using MATLAB :
-
    Run the script “DisplayResult.m” located under the directory “DisplayResult/<2D or 3D>/Demo_<TYPE>/”
    where TYPE = either “Fast” or “Slow”
 
