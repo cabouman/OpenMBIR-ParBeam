@@ -12,19 +12,10 @@
 
 ## INSTRUCTIONS:
 
-1) Compile the code-package : 
-
-   Under directory “Compile/<2D or 3D>”, run the master script “Compile.sh” in terminal 
-   (prior to compilation, first change directory (cd) to where the script located). 
+1) Compile the code-package:
+   Run the scripts “Compile/2D/Compile.sh" and "Compile/3D/Compile.sh" to compile the 2D and 3D code packages. 
    
-   IMPORTANT : The 2D and 3D reconstruction packages must both be compiled individually.	
-
-   This is a master compile script that compiles 2 portions of the code-package namely:  
-   (a) Generation of System Matrix
-   (b) MBIR Reconstruction 
-
-2) Execute the script on sample data sets : 
-
+2) Execute the script on sample data sets:
    (a) For a quick demo, run the script “Demo_Fast.sh” under “Demo/<2D or 3D>” (2D - Shepp-Logan Phantom Data and 3D - FeOOH Data)
    (b) For a slow demo,  run the script “Demo_Slow.sh” under “Demo/<2D or 3D>” (2D - 2 slices of FeOOH Data   and 3D - 16 slices of FeOOH Data)  
 
