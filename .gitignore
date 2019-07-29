@@ -29,6 +29,8 @@
 *.hex
 SourceCode/2D/Generate_SystemMatrix/GenerateSystemMatrix2D
 SourceCode/2D/MBIR/MBIR_2DCT
+SourceCode/3D/Generate_SystemMatrix/GenerateSystemMatrix3DParallel
+SourceCode/3D/MBIR/MBIR_3DCT
 
 # Debug files
 *.dSYM/
