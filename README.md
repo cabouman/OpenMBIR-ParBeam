@@ -17,7 +17,7 @@
    Under directory “Compile/<2D or 3D>”, run the master script “Compile.sh” in terminal 
    (prior to compilation, first change directory (cd) to where the script located). 
    
-   IMPORTANT : Compilation has to be once each for 2D and 3D reconstruction packages.	
+   IMPORTANT : The 2D and 3D reconstruction packages must both be compiled individually.	
 
    This is a master compile script that compiles 2 portions of the code-package namely:  
    (a) Generation of System Matrix
