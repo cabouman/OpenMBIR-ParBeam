@@ -1,40 +1,4 @@
-# Object files
 *.o
-*.ko
-*.obj
-*.elf
-
-# Precompiled Headers
-*.gch
-*.pch
-
-# Libraries
-*.lib
-*.a
-*.la
-*.lo
-
-# Shared objects (inc. Windows DLLs)
-*.dll
-*.so
-*.so.*
-*.dylib
-
-# Executables
-*.exe
-*.out
-*.app
-*.i*86
-*.x86_64
-*.hex
-SourceCode/2D/Generate_SystemMatrix/GenerateSystemMatrix2D
-SourceCode/2D/MBIR/MBIR_2DCT
-SourceCode/3D/Generate_SystemMatrix/GenerateSystemMatrix3DParallel
-SourceCode/3D/MBIR/MBIR_3DCT
-
-# Debug files
-*.dSYM/
-*.su
-
-# OS files
 *.DS_Store
+*.bin
+*._*
