@@ -29,12 +29,8 @@
  * USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  * ============================================================================== */
 
-#include <math.h>
 
-#include "../../MBIRModularUtils_2D.h"
 #include "icd_2D.h"
-#include <stdio.h>
-#include <stdlib.h>
 
 
 float ICDStep2D(

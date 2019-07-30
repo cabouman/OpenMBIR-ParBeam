@@ -30,14 +30,9 @@
  * ============================================================================== */
 
 
-#include <stdio.h>
-#include <stdlib.h>
-#include <math.h>
-#include <string.h>	/* strcmp */
-#include <getopt.h>	/* getopt */
+
 
 #include "MBIRModularUtils_2D.h"
-#include "allocate.h"
 
 /***************************************************/
 /*  Utilities for reading/writing 2D System matrix */

@@ -9,6 +9,6 @@ clean:
 OBJ = A_comp_2D.o ../../allocate.o ../../MBIRModularUtils_2D.o 
 
 ct: Gen_SysMatrix_2D.o $(OBJ)
-	$(CC) $(CFLAGS) -o GenerateSystemMatrix2D Gen_SysMatrix_2D.o $(OBJ) -lm
+	#echo "$(CC) $(CFLAGS) -o GenerateSystemMatrix2D Gen_SysMatrix_2D.o $(OBJ) -lm"
 
 

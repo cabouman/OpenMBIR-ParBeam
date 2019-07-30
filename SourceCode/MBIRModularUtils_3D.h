@@ -2,6 +2,15 @@
 #ifndef MBIR_MODULAR_UTILS_3D_H
 #define MBIR_MODULAR_UTILS_3D_H
 
+#include <stdio.h>
+#include <stdlib.h>
+#include <math.h>
+#include <string.h> /* strcmp */
+#include <getopt.h> /* getopt */
+
+#include "MBIRModularUtils_2D.h"
+#include "allocate.h"
+
 /* The following utilities are used for managing data structures and files associated */
 /* with the Modular MBIR Framework */
 

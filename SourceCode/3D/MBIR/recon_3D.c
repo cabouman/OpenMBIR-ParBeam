@@ -29,16 +29,7 @@
  * USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  * ============================================================================== */
 
-#include <stdio.h>
-#include <stdlib.h>
-#include <math.h>
-#include <time.h>
-#include <string.h>
 
-#include "../../MBIRModularUtils_3D.h"
-#include "../../MBIRModularUtils_2D.h"
-#include "../../allocate.h"
-#include "icd_3D.h"
 #include "recon_3D.h"
 
 #define EPSILON 0.0000001

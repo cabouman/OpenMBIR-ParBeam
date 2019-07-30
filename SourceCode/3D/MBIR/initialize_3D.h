@@ -32,6 +32,17 @@
 #ifndef _INITIALIZE_3D_H_
 #define _INITIALIZE_3D_H_
 
+
+#include <stdio.h>
+#include <stdlib.h>
+#include <math.h>
+#include <string.h> /* strcmp */
+#include <getopt.h> /* getopt */
+
+#include "../../MBIRModularUtils_3D.h"
+#include "../../MBIRModularUtils_2D.h"
+#include "../../allocate.h"
+
 struct CmdLineMBIR{
     
     char ImageParamsFile[200];

@@ -32,6 +32,13 @@
 #ifndef _ICD_3D_H_
 #define _ICD_3D_H_
 
+#include <math.h>
+
+#include "../../MBIRModularUtils_3D.h"
+#include "../../MBIRModularUtils_2D.h"
+#include <stdio.h>
+#include <stdlib.h>
+
 struct ICDInfo
 {
     int VoxelIndex ; /* Index of Voxel being updated */

@@ -2,6 +2,12 @@
 #ifndef MBIR_MODULAR_UTILS_2D_H
 #define MBIR_MODULAR_UTILS_2D_H
 
+#include <stdio.h>
+#include <stdlib.h>
+#include <math.h>
+#include <string.h> /* strcmp */
+#include <getopt.h> /* getopt */
+#include "allocate.h"
 
 /* Define constants that will be used in modular MBIR framework */
 #define MBIR_MODULAR_UTIL_VERSION "0.0";
