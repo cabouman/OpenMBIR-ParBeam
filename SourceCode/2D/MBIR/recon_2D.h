@@ -29,14 +29,14 @@
  * USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  * ============================================================================== */
 
-#ifndef _RECON3D_H_
-#define _RECON3D_H_
+#ifndef _RECON_2D_H_
+#define _RECON_2D_H_
 
-void MBIRReconstruct3D(struct Image3D *Image, struct Sino3DParallel *sinogram, struct ReconParamsQGGMRF3D reconparams, struct SysMatrix2D *A, char *ImageReconMask);
+void MBIRReconstruct2D(struct Image2D *Image, struct Sino2DParallel *sinogram, struct ReconParamsQGGMRF2D reconparams, struct SysMatrix2D *A, char *ImageReconMask);
 
-float MAPCostFunction3D(float **e, struct Image3D *Image, struct Sino3DParallel *sinogram, struct ReconParamsQGGMRF3D *reconparams);
+float MAPCostFunction2D(float *e, struct Image2D *Image, struct Sino2DParallel *sinogram, struct ReconParamsQGGMRF2D *reconparams);
 
-void forwardProject3D(float **AX, struct Image3D *X, struct SysMatrix2D *A); /* Compute A-matrix times X */
+void forwardProject2D(float *AX, struct Image2D *X, struct SysMatrix2D *A); /* Compute A-matrix times X */
 
 void shuffle(int *order, int len);
 

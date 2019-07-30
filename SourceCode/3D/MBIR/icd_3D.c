@@ -31,23 +31,30 @@
 
 #include <math.h>
 
+#include "../../../Utilities/3D/MBIRModularUtils_3D.h"
 #include "../../../Utilities/2D/MBIRModularUtils_2D.h"
-#include "icd2d.h"
+#include "icd_3D.h"
 #include <stdlib.h>
 #include <stdio.h>
 
 
-float ICDStep2D(
-	float *e,  /* e=y-AX */
-	float *w,
+float ICDStep3D(
+	float **e,  /* e=y-AX */
+	float **w,
     struct SysMatrix2D *A,
 	struct ICDInfo *icd_info)
 {
-	int i, n;
+	int i, n, Nxy, XYPixelIndex, SliceIndex;
     struct SparseColumn A_column;
-	float UpdatedPixelValue;
+	float UpdatedVoxelValue;
 
-    A_column = A->column[icd_info->PixelIndex];
+    Nxy = icd_info->Nxy; /* No. of pixels within a given slice */
+    
+    /* Voxel Index: jz*Nx*Ny + jy*Nx + jx */
+    XYPixelIndex = icd_info->VoxelIndex%Nxy; /* XY pixel index within a given slice */
+    SliceIndex = icd_info->VoxelIndex/Nxy;   /* Index of slice : between 0 to NSlices-1 */
+    
+    A_column = A->column[XYPixelIndex]; /* System matrix does not vary with slice for 3-D Parallel beam geometry */
     
     /* Formulate the quadratic surrogate function (with coefficients theta1, theta2) for the local cost function */
 	icd_info->theta1 = 0.0;
@@ -55,36 +62,37 @@ float ICDStep2D(
     
 	for (n = 0; n < A_column.Nnonzero; n++)
 	{
-		i = A_column.RowIndex[n];
+		i = A_column.RowIndex[n] ; /* (View, Detector-Channel) index pertaining to same slice as voxel */
         
-        icd_info->theta1 -= A_column.Value[n]*w[i]*e[i];
-        icd_info->theta2 += A_column.Value[n]*w[i]*A_column.Value[n];
+        icd_info->theta1 -= A_column.Value[n]*w[SliceIndex][i]*e[SliceIndex][i];
+        icd_info->theta2 += A_column.Value[n]*w[SliceIndex][i]*A_column.Value[n];
 	}
    
     /* theta1 and theta2 must be further adjusted according to Prior Model */
     /* Step can be skipped if merely ML estimation (no prior model) is followed rather than MAP estimation */
-    QGGMRF2D_UpdateICDParams(icd_info);
+    QGGMRF3D_UpdateICDParams(icd_info);
 	
     /* Calculate Updated Pixel Value */
-    UpdatedPixelValue = icd_info->v - (icd_info->theta1/icd_info->theta2) ;
+    UpdatedVoxelValue = icd_info->v - (icd_info->theta1/icd_info->theta2) ;
     
-	return UpdatedPixelValue;
+	return UpdatedVoxelValue;
 }
 
 /* ICD update with the QGGMRF prior model */
 /* Prior and neighborhood specific */
-void QGGMRF2D_UpdateICDParams(struct ICDInfo *icd_info)
+void QGGMRF3D_UpdateICDParams(struct ICDInfo *icd_info)
 {
     int j; /* Neighbor relative position to Pixel being updated */
     float delta, SurrogateCoeff;
-    float sum1_Nearest=0, sum1_Diag=0; /* for theta1 calculation */
-    float sum2_Nearest=0, sum2_Diag=0; /* for theta2 calculation */
-    float b_nearest, b_diag;
+    float sum1_Nearest=0, sum1_Diag=0, sum1_Interslice=0; /* for theta1 calculation */
+    float sum2_Nearest=0, sum2_Diag=0, sum2_Interslice=0; /* for theta2 calculation */
+    float b_nearest, b_diag, b_interslice;
     
     b_nearest=icd_info->Rparams.b_nearest;
     b_diag=icd_info->Rparams.b_diag;
+    b_interslice = icd_info->Rparams.b_interslice;
     
-    for (j = 0; j < 8; j++)
+    for (j = 0; j < 10; j++)
     {
         delta = icd_info->v - icd_info->neighbors[j];
         SurrogateCoeff = QGGMRF_SurrogateCoeff(delta,icd_info);
@@ -94,21 +102,25 @@ void QGGMRF2D_UpdateICDParams(struct ICDInfo *icd_info)
             sum1_Nearest += (SurrogateCoeff * delta);
             sum2_Nearest += SurrogateCoeff;
         }
-        if (j >= 4)
+        if(j>=4 && j<6)
+        {
+            sum1_Interslice += (SurrogateCoeff * delta);
+            sum2_Interslice += SurrogateCoeff;
+        }
+        if (j >= 6)
         {
             sum1_Diag += (SurrogateCoeff * delta);
             sum2_Diag += SurrogateCoeff;
         }
     }
     
-    icd_info->theta1 +=  (b_nearest * sum1_Nearest + b_diag * sum1_Diag) ;
-    icd_info->theta2 +=  (b_nearest * sum2_Nearest + b_diag * sum2_Diag) ;
+    icd_info->theta1 +=  (b_nearest * sum1_Nearest + b_diag * sum1_Diag + b_interslice * sum1_Interslice) ;
+    icd_info->theta2 +=  (b_nearest * sum2_Nearest + b_diag * sum2_Diag + b_interslice * sum2_Interslice) ;
 }
 
 
-
 /* the potential function of the QGGMRF prior model.  p << q <= 2 */
-float QGGMRF_Potential(float delta, struct ReconParamsQGGMRF2D *Rparams)
+float QGGMRF_Potential(float delta, struct ReconParamsQGGMRF3D *Rparams)
 {
     float p, q, T, SigmaX;
     float temp, GGMRF_Pot;
@@ -160,19 +172,22 @@ float QGGMRF_SurrogateCoeff(float delta, struct ICDInfo *icd_info)
 
 
 /* extract the neighborhood system */
-void ExtractNeighbors2D(
+void ExtractNeighbors3D(
                         struct ICDInfo *icd_info,
-                        struct Image2D *Image)
+                        struct Image3D *Image)
 {
-    int jx, jy, plusx, minusx, plusy, minusy;
-    int Nx, Ny;
+    int jx, jy, jz, plusx, minusx, plusy, minusy, plusz, minusz;
+    int Nx, Ny, Nz, Nxy;
     
     Nx = Image->imgparams.Nx;
     Ny = Image->imgparams.Ny;
+    Nz = Image->imgparams.Nz;
+    Nxy = Nx*Ny;
     
-    /* PixelIndex = jy*Nx+jx */
-    jy = icd_info->PixelIndex/Nx; /* Y-index of pixel */
-    jx = icd_info->PixelIndex%Nx; /* X-index of pixel */
+    /* Voxel Index = jz*Ny*Nx+jy*Nx+jx */
+    jz = icd_info->VoxelIndex/(Ny*Nx); /* Z-Index of pixel */
+    jy = (icd_info->VoxelIndex/Nx)%Ny; /* Y-index of pixel */
+    jx = icd_info->VoxelIndex%Nx;      /* X-index of pixel */
     
     plusx = jx + 1;
     plusx = ((plusx < Nx) ? plusx : 0);
@@ -182,33 +197,47 @@ void ExtractNeighbors2D(
     plusy = ((plusy < Ny) ? plusy : 0);
     minusy = jy - 1;
     minusy = ((minusy < 0) ? (Ny-1) : minusy);
+    plusz = jz + 1;
+    plusz = ((plusz < Nz) ? plusz : 0);
+    minusz = jz - 1;
+    minusz = ((minusz < 0) ? (Nz-1) : minusz);
     
-    icd_info->neighbors[0] = Image->image[jy*Nx+plusx];
-    icd_info->neighbors[1] = Image->image[jy*Nx+minusx];
-    icd_info->neighbors[2] = Image->image[plusy*Nx+jx];
-    icd_info->neighbors[3] = Image->image[minusy*Nx+jx];
+    icd_info->neighbors[0] = Image->image[jz][jy*Nx+plusx];
+    icd_info->neighbors[1] = Image->image[jz][jy*Nx+minusx];
+    icd_info->neighbors[2] = Image->image[jz][plusy*Nx+jx];
+    icd_info->neighbors[3] = Image->image[jz][minusy*Nx+jx];
     
-    icd_info->neighbors[4] = Image->image[plusy*Nx+plusx];
-    icd_info->neighbors[5] = Image->image[plusy*Nx+minusx];
-    icd_info->neighbors[6] = Image->image[minusy*Nx+plusx];
-    icd_info->neighbors[7] = Image->image[minusy*Nx+minusx];
+    icd_info->neighbors[4] = Image->image[plusz][jy*Nx+jx];
+    icd_info->neighbors[5] = Image->image[minusz][jy*Nx+jx];
+    
+    icd_info->neighbors[6] = Image->image[jz][plusy*Nx+plusx];
+    icd_info->neighbors[7] = Image->image[jz][plusy*Nx+minusx];
+    icd_info->neighbors[8] = Image->image[jz][minusy*Nx+plusx];
+    icd_info->neighbors[9] = Image->image[jz][minusy*Nx+minusx];
 }
 
 /* Update error term e=y-Ax after an ICD update on x */
-void UpdateError2D(
-                   float *e,
+void UpdateError3D(
+                   float **e,
                    struct SysMatrix2D *A,
                    float diff,
                    struct ICDInfo *icd_info)
 {
-    int n, j, i;
+    int n, i, XYPixelIndex, SliceIndex;
+    int Nxy;
     
-    j = icd_info->PixelIndex; /* index of updated pixel */
+    Nxy = icd_info->Nxy; /* No. of pixels within a given slice */
     
-    for (n = 0; n < A->column[j].Nnonzero; n++)
+    /* Voxel Index: jz*Nx*Ny + jy*Nx + jx */
+    XYPixelIndex = icd_info->VoxelIndex%Nxy; /* XY pixel index within a given slice */
+    SliceIndex = icd_info->VoxelIndex/Nxy;   /* Index of slice : between 0 to NSlices-1 */
+    
+    /* System matrix does not vary with slice for 3-D Parallel beam geometry, so A->column only indexed by XYPixelIndex */
+    /* Update sinogram error */
+    for (n = 0; n < A->column[XYPixelIndex].Nnonzero; n++)
     {
-        i = A->column[j].RowIndex[n];
-        e[i] -= A->column[j].Value[n]*diff;
+        i = A->column[XYPixelIndex].RowIndex[n]  ; /* (View, Detector-Channel) index pertaining to same slice as voxel */
+        e[SliceIndex][i] -= A->column[XYPixelIndex].Value[n]*diff;
     }
 }
 

@@ -37,8 +37,8 @@
 
 #include "../../../Utilities/2D/MBIRModularUtils_2D.h"
 #include "../../../Utilities/MemoryAllocation/allocate.h"
-#include "icd2d.h"
-#include "recon2d.h"
+#include "icd_2D.h"
+#include "recon_2D.h"
 
 #define EPSILON 0.0000001
 

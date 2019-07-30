@@ -29,15 +29,35 @@
  * USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  * ============================================================================== */
 
-#ifndef _RECON2D_H_
-#define _RECON2D_H_
+#ifndef _ICD_3D_H_
+#define _ICD_3D_H_
 
-void MBIRReconstruct2D(struct Image2D *Image, struct Sino2DParallel *sinogram, struct ReconParamsQGGMRF2D reconparams, struct SysMatrix2D *A, char *ImageReconMask);
+struct ICDInfo
+{
+    int VoxelIndex ; /* Index of Voxel being updated */
+    float v; /* current pixel value */
+    float neighbors[10]; /* Currently 10-point neighborhood system */
+    
+	float theta1; /* Quadratic surrogate function parameters -theta1 and theta2 */
+	float theta2;
+    
+    struct ReconParamsQGGMRF3D Rparams; /* Reconstruction Parameters (includes prior parameters) */
+    
+    int Nxy;    /* Number of pixels within a given slice */
+    int NViewsTimesNChannels;   /* Number of projection measurements per slice */
+};
 
-float MAPCostFunction2D(float *e, struct Image2D *Image, struct Sino2DParallel *sinogram, struct ReconParamsQGGMRF2D *reconparams);
+float ICDStep3D(float **e, float **w, struct SysMatrix2D *A, struct ICDInfo *icd_info);
 
-void forwardProject2D(float *AX, struct Image2D *X, struct SysMatrix2D *A); /* Compute A-matrix times X */
+/* Prior-specific, independent of neighborhood */
+float QGGMRF_SurrogateCoeff(float delta, struct ICDInfo *icd_info);
+float QGGMRF_Potential(float delta, struct ReconParamsQGGMRF3D *Rparams);
+/* Prior and neighborhood specific */
+void  QGGMRF3D_UpdateICDParams(struct ICDInfo *icd_info);
+/* Only neighborhood specific */
+void ExtractNeighbors3D(struct ICDInfo *icd_info, struct Image3D *X);
 
-void shuffle(int *order, int len);
+/* Update error term e=y-Ax after an ICD update on x */
+void UpdateError3D(float **e, struct SysMatrix2D *A, float diff, struct ICDInfo *icd_info);
 
 #endif

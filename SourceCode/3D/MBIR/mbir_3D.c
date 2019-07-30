@@ -40,8 +40,8 @@
 #include "../../../Utilities/3D/MBIRModularUtils_3D.h"
 #include "../../../Utilities/2D/MBIRModularUtils_2D.h"
 #include "../../../Utilities/MemoryAllocation/allocate.h"
-#include "initialize.h"
-#include "recon3d.h"
+#include "initialize_3D.h"
+#include "recon_3D.h"
 
 /* #ifdef STORE_A_MATRIX - This option set by default in A_comp.h */
 /* This option is to precompute and store the forward matrix rather than compute it on the fly */

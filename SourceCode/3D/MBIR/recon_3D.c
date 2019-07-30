@@ -38,8 +38,8 @@
 #include "../../../Utilities/3D/MBIRModularUtils_3D.h"
 #include "../../../Utilities/2D/MBIRModularUtils_2D.h"
 #include "../../../Utilities/MemoryAllocation/allocate.h"
-#include "icd3d.h"
-#include "recon3d.h"
+#include "icd_3D.h"
+#include "recon_3D.h"
 
 #define EPSILON 0.0000001
 

@@ -39,8 +39,8 @@
 
 #include "../../../Utilities/2D/MBIRModularUtils_2D.h"
 #include "../../../Utilities/MemoryAllocation/allocate.h"
-#include "initialize.h"
-#include "recon2d.h"
+#include "initialize_2D.h"
+#include "recon_2D.h"
 
 /* #ifdef STORE_A_MATRIX - This option set by default in A_comp.h */
 /* This option is to precompute and store the System matrix rather than compute it on the fly */

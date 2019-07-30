@@ -29,8 +29,8 @@
  * USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  * ============================================================================== */
 
-#ifndef _INITIALIZE_H_
-#define _INITIALIZE_H_
+#ifndef _INITIALIZE_2D_H_
+#define _INITIALIZE_2D_H_
 
 struct CmdLineMBIR{
     

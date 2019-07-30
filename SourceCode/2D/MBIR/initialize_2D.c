@@ -36,7 +36,7 @@
 
 #include "../../../Utilities/2D/MBIRModularUtils_2D.h"
 #include "../../../Utilities/MemoryAllocation/allocate.h"
-#include "initialize.h"
+#include "initialize_2D.h"
 
 /* Initialize constant image */
 void Initialize_Image(struct Image2D *Image, struct CmdLineMBIR *cmdline, float InitValue)

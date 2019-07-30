@@ -29,29 +29,32 @@
  * USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  * ============================================================================== */
 
-#ifndef _INITIALIZE_H_
-#define _INITIALIZE_H_
+#ifndef _ICD_2D_H_
+#define _ICD_2D_H_
 
-struct CmdLineMBIR{
+struct ICDInfo
+{
+    int PixelIndex ; /* Index of Pixel being updated */
+    float v; /* current pixel value */
+    float neighbors[8]; /* Currently 8-point neighborhood system */
     
-    char ImageParamsFile[200];
-    char InitImageDataFile[200]; /* optional input */
-    char ReconImageDataFile[200]; /* output */
-    char SinoParamsFile[200];
-    char SinoDataFile[200];
-    char SinoWeightsFile[200];
-    char ReconParamsFile[200];
-    char SysMatrixFile[200];
+	float theta1; /* Quadratic surrogate function parameters -theta1 and theta2 */
+	float theta2;
+    
+    struct ReconParamsQGGMRF2D Rparams; /* Reconstruction Parameters (includes prior parameters) */
 };
 
+float ICDStep2D(float *e, float *w, struct SysMatrix2D *A, struct ICDInfo *icd_info);
 
-void Initialize_Image(struct Image3D *Image, struct CmdLineMBIR *cmdline, float InitValue);
-void GenConstImage(struct Image3D *Image, float value);
-char *GenImageReconMask (struct Image3D *Image, float OutsideROIValue);
-void readSystemParams ( struct CmdLineMBIR *cmdline, struct ImageParams3D *imgparams, struct SinoParams3DParallel *sinoparams, struct ReconParamsQGGMRF3D *reconparams);
-void NormalizePriorWeights3D(struct ReconParamsQGGMRF3D *reconparams);
-void readCmdLineMBIR(int argc, char *argv[], struct CmdLineMBIR *cmdline);
-void PrintCmdLineUsage(char *ExecFileName);
-int CmdLineHelp(char *string);
+/* Prior-specific, independent of neighborhood */
+float QGGMRF_SurrogateCoeff(float delta, struct ICDInfo *icd_info);
+float QGGMRF_Potential(float delta, struct ReconParamsQGGMRF2D *Rparams);
+/* Prior and neighborhood specific */
+void  QGGMRF2D_UpdateICDParams(struct ICDInfo *icd_info);
+/* Only neighborhood specific */
+void ExtractNeighbors2D(struct ICDInfo *icd_info, struct Image2D *X);
+
+/* Update error term e=y-Ax after an ICD update on x */
+void UpdateError2D(float *e, struct SysMatrix2D *A, float diff, struct ICDInfo *icd_info);
 
 #endif

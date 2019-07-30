@@ -35,3 +35,6 @@ SourceCode/3D/MBIR/MBIR_3DCT
 # Debug files
 *.dSYM/
 *.su
+
+# OS files
+*.DS_Store
