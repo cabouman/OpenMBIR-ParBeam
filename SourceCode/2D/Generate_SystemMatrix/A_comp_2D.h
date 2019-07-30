@@ -29,46 +29,35 @@
  * USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  * ============================================================================== */
 
-/* ========================================================== */
-/* MBIR RECONSTRUCTION SOFTWARE FOR 2D PARALLEL-BEAM X-RAY CT */
-/*           by Pengchong Jin, Purdue University              */
-/* ========================================================== */
+#ifndef _ACOMP_2D_H_
+#define _ACOMP_2D_H_
 
-#include "../../../Utilities/2D/MBIRModularUtils_2D.h"
-#include "../../../Utilities/MemoryAllocation/allocate.h"
-#include "A_comp.h"
-#include <stdlib.h>
-#include <stdio.h>
+/* Computation options */
+#define WIDE_BEAM   /* Finite element analysis of detector channel, accounts for sensitivity variation across its aperture */
+#define LEN_PIX 511 /* determines the spatial resolution for Detector-Pixel computation. Higher LEN_PIX, higher resolution */
+                    /* In this implementation, spatial resolution is : [2*PixelDimension/LEN_PIX]^(-1) */
+#define LEN_DET 101 /* No. of Detector Elements */
+                    /* Each detector channel is "split" into LEN_DET smaller elements ... */
+                    /* to account for detector sensitivity variation across its aperture */
 
-/* #ifdef STORE_A_MATRIX - This option set by default in A_comp.h */
-/* This option is to precompute and store the System matrix rather than compute it on the fly */
-
-int main(int argc, char *argv[])
+/* Command Line structure for Generating System matrix */
+struct CmdLineSysGen
 {
-    struct CmdLineSysGen cmdline;
-    struct ImageParams2D imgparams;
-    struct SinoParams2DParallel sinoparams;
-    float **PixelDetector_profile;
-    struct SysMatrix2D *A ;
-    
-    /* read Command Line */
-    readCmdLineSysGen(argc, argv, &cmdline);
-	/* read input arguments and parameters */
-	readParamsSysMatrix(&cmdline, &imgparams, &sinoparams);
-    /* Compute Pixel-Detector Profile */
-    PixelDetector_profile = ComputePixelProfile2DParallel(&sinoparams, &imgparams);  /* pixel-detector profile function */
-    /* Compute System Matrix */
-    A = ComputeSysMatrix2DParallel(&sinoparams, &imgparams, PixelDetector_profile);
-    /* Write out System Matrix */
-    if(WriteSysMatrix2D(cmdline.SysMatrixFileName, A))
-    {  fprintf(stderr, "Error in writing out System Matrix to file %s through function WriteSysMatrix2D \n", cmdline.SysMatrixFileName);
-       exit(-1);
-    }
-    /* Free System Matrix */
-    if(FreeSysMatrix2D(A))
-    {  fprintf(stderr, "Error System Matrix memory could not be freed through function FreeSysMatrix2D \n");
-       exit(-1);
-    }
-    
-	return 0;
-}
+    char imgparamsFileName[200];  /* input file */
+    char sinoparamsFileName[200]; /* input file */
+    char SysMatrixFileName[200]; /* output file */
+};
+
+/* Compute Pixel-Detector Profile for 2D Parallel Beam Geometry */
+float **ComputePixelProfile2DParallel(struct SinoParams2DParallel *sinoparams, struct ImageParams2D *imgparams);
+/* Compute System Matrix for 2D Parallel Beam Geometry*/
+struct SysMatrix2D *ComputeSysMatrix2DParallel(struct SinoParams2DParallel *sinoparams, struct ImageParams2D *imgparams, float **pix_prof);
+/* Read Command line */
+void readCmdLineSysGen(int argc, char *argv[], struct CmdLineSysGen *cmdline);
+/* Wrapper to read in system matrix parameters from Command line */
+void readParamsSysMatrix(struct CmdLineSysGen *cmdline, struct ImageParams2D *imgparams, struct SinoParams2DParallel *sinoparams);
+/* Print correct usage of Command Line*/
+void PrintCmdLineUsage(char *ExecFileName);
+int CmdLineHelp(char *string);
+
+#endif

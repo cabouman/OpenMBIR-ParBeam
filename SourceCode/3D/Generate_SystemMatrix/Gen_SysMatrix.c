@@ -34,16 +34,14 @@
 /*           by Pengchong Jin, Purdue University              */
 /* ========================================================== */
 
-#include "../../../Utilities/3D/MBIRModularUtils_3D.h"
-#include "../../../Utilities/2D/MBIRModularUtils_2D.h"
-#include "../../../Utilities/MemoryAllocation/allocate.h"
-#include "A_comp.h"
-#include <stdlib.h>
+#include "../../MBIRModularUtils_3D.h"
+#include "../../MBIRModularUtils_2D.h"
+#include "../../allocate.h"
+#include "A_comp_3D.h"
 #include <stdio.h>
+#include <stdlib.h>
 #include <time.h>
 
-/* #ifdef STORE_A_MATRIX - This option set by default in A_comp.h */
-/* This option is to precompute and store the forward matrix rather than compute it on the fly */
 
 int main(int argc, char *argv[])
 {

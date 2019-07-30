@@ -29,15 +29,15 @@
  * USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  * ============================================================================== */
 
-#include <stdlib.h>
 #include <stdio.h>
+#include <stdlib.h>
 #include <string.h>	/* strcmp */
 #include <math.h>
 #include <getopt.h>	/* getopt */
 
-#include "../../../Utilities/2D/MBIRModularUtils_2D.h"
-#include "../../../Utilities/MemoryAllocation/allocate.h"
-#include "A_comp.h"
+#include "../../MBIRModularUtils_2D.h"
+#include "../../allocate.h"
+#include "A_comp_2D.h"
 
 /******************************************************************/
 /* Compute line segment lengths through a pixel for the given set */

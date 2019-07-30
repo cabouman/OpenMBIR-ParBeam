@@ -29,15 +29,15 @@
  * USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  * ============================================================================== */
 
-#include <stdlib.h>
 #include <stdio.h>
+#include <stdlib.h>
 #include <math.h>
 #include <time.h>
 #include <string.h>
 
-#include "../../../Utilities/3D/MBIRModularUtils_3D.h"
-#include "../../../Utilities/2D/MBIRModularUtils_2D.h"
-#include "../../../Utilities/MemoryAllocation/allocate.h"
+#include "../../MBIRModularUtils_3D.h"
+#include "../../MBIRModularUtils_2D.h"
+#include "../../allocate.h"
 #include "icd_3D.h"
 #include "recon_3D.h"
 

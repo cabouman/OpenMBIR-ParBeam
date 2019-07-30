@@ -31,11 +31,11 @@
 
 #include <math.h>
 
-#include "../../../Utilities/3D/MBIRModularUtils_3D.h"
-#include "../../../Utilities/2D/MBIRModularUtils_2D.h"
+#include "../../MBIRModularUtils_3D.h"
+#include "../../MBIRModularUtils_2D.h"
 #include "icd_3D.h"
-#include <stdlib.h>
 #include <stdio.h>
+#include <stdlib.h>
 
 
 float ICDStep3D(

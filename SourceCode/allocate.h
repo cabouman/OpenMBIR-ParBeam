@@ -29,10 +29,9 @@
  * USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  * ============================================================================== */
 
-#ifndef ALLOCATE_INC
-#define ALLOCATE_INC
+#ifndef _ALLOCATE_INC
+#define _ALLOCATE_INC
 
-#include <stdlib.h>
 
 void *get_spc(int num, size_t size);
 void *mget_spc(int num, size_t size);

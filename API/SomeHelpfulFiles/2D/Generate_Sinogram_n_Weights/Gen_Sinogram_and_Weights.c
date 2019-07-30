@@ -34,8 +34,8 @@
 /*           by Pengchong Jin, Purdue University              */
 /* ========================================================== */
 
-#include <stdlib.h>
 #include <stdio.h>
+#include <stdlib.h>
 
 #include "../../../../Utilities/2D/MBIRModularUtils_2D.h"
 #include "../../../../Utilities/MemoryAllocation/allocate.h"
