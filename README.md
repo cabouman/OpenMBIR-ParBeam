@@ -13,11 +13,11 @@
 ## INSTRUCTIONS:
 
 1) Compile the code-package:
-   Run the scripts “Compile/2D/Compile.sh" and "Compile/3D/Compile.sh" to compile the 2D and 3D code packages. 
+   Run the script "./build/build.sh" to compile the 2D and 3D code packages. 
    
 2) Run demos:
-   (a) For fast demo, run the scripts “Demo/2D/Demo_Fast.sh" or “Demo/3D/Demo_Fast.sh".
-   (b) For slow demo, run the scripts “Demo/2D/Demo_Slow.sh” or “Demo/3D/Demo_Slow.sh”.
+   (a) For fast demo, run the scripts "Demo/2D/Demo_Fast.sh" or "Demo/3D/Demo_Fast.sh".
+   (b) For slow demo, run the scripts "Demo/2D/Demo_Slow.sh" or "Demo/3D/Demo_Slow.sh".
 
 3) Display the result using MATLAB :
    Run the script “DisplayResult.m” located under the directory “DisplayResult/<2D or 3D>/Demo_<TYPE>/”
