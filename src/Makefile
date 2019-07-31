@@ -1,25 +1,25 @@
 CC=gcc
 FLAGS=-Wall -pedantic -lm
 
-src=../src
+
 bin=../bin
 
-UTILS=$(src)/allocate.o $(src)/MBIRModularUtils_2D.o $(src)/MBIRModularUtils_3D.o
-SRC_Gen_SysMatrix_2D = $(src)/A_comp_2D.o $(src)/Gen_SysMatrix_2D.o
-SRC_Gen_SysMatrix_3D = $(src)/A_comp_3D.o $(src)/Gen_SysMatrix_3D.o 
-SRC_MBIR_2D = $(src)/icd_2D.o $(src)/initialize_2D.o $(src)/recon_2D.o $(src)/mbir_2D.o
-SRC_MBIR_3D = $(src)/icd_3D.o $(src)/initialize_3D.o $(src)/recon_3D.o $(src)/mbir_3D.o
+UTILS=allocate.o MBIRModularUtils_2D.o MBIRModularUtils_3D.o
+SRC_Gen_SysMatrix_2D = A_comp_2D.o Gen_SysMatrix_2D.o
+SRC_Gen_SysMatrix_3D = A_comp_3D.o Gen_SysMatrix_3D.o 
+SRC_MBIR_2D = icd_2D.o initialize_2D.o recon_2D.o mbir_2D.o
+SRC_MBIR_3D = icd_3D.o initialize_3D.o recon_3D.o mbir_3D.o
 
 
 # --- meta labels -------------------------------------------------
 
 all: main
-	rm -f $(src)/*.o
+	rm -f *.o
 
 main: utils Gen_SysMatrix_2D mbir_2D Gen_SysMatrix_3D mbir_3D
 
 clean:
-	rm -f $(src)/*.o $(bin)/*
+	rm -f *.o $(bin)/*
 
 # --- linking -------------------------------------------------
 
