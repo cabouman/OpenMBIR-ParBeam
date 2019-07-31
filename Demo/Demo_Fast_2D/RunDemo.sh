@@ -16,4 +16,4 @@ $BIN/Gen_SysMatrix_2D -i params/$Fname -j params/$Fname -m data/$Fname
 # -m <InputFileName>[.2Dsysmatrix] -s <InputFileName>[.2Dsinodata] -w <InputFileName>[.2Dweightdata] -r <OutputFileName>[.2Dimgdata] \
 # Additional option (for initial image): -v <InitialImageFileName>[.2Dimgdata]
 
-$BIN/mbir_2D -i params/$Fname -j params/$Fname -k params/$Fname -m data/$Fname -s data/$Fname -w data/$Fname -r $Fname
+$BIN/mbir_2D -i params/$Fname -j params/$Fname -k params/$Fname -m data/$Fname -s data/$Fname -w data/$Fname -r recon/$Fname
