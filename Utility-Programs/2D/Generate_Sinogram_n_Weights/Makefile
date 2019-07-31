@@ -2,7 +2,7 @@
 CFLAGS = -Wall -pedantic
 SRCDir = ../../../src
 
-all: ct clean
+all: ct 
 
 clean:
 	rm *.o $(SRCDir)/*.o $(SRCDir)/2D/*.o 
