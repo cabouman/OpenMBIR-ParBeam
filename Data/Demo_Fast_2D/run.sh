@@ -1,21 +1,13 @@
 #!/usr/bin/env bash
 
-DirName="./Data/2D/Demo_Fast"
 Fname="shepp"
 
-#******
-
 #Generate System Matrix
-#Command line format: ./<Executable File Name>  -i <InputFileName.imgparams> -j <InputFileName.sinoparams> -m <OutputFileName.2Dsysmatrix>
+# Command line format :
+#./<Executable File Name>  -i <InputFileName>[.imgparams] -j <InputFileName>[.sinoparams] -m <OutputFileName>[.2Dsysmatrix]
 
-# Note : The necessary extensions for certain input files are mentioned above within a "[ ]" symbol above
-# However, they are NOT to be included as part of the file name in the command line arguments
+../../bin/Gen_SysMatrix_2D -i parameters/$Fname -j parameters/$Fname -m Reconstruction/$Fname
 
-args_required="-i $DirName/parameters/$Fname -j $DirName/parameters/$Fname -m $DirName/Reconstruction/$Fname"
-./src/GenerateSystemMatrix2D $args_required
-
-
-#******
 
 #MBIR
 #Command line format:
