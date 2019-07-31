@@ -1,5 +1,5 @@
 
 
 
-export PROJECTROOT="$(dirname $0)"
+export PROJECTROOT="$(pwd)/$(dirname $0)"
 echo PROJECTROOT = $PROJECTROOT
