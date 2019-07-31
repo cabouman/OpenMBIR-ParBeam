@@ -12,7 +12,7 @@ Fname="shepp"
 # However, they are NOT to be included as part of the file name in the command line arguments
 
 args_required="-i $DirName/parameters/$Fname -j $DirName/parameters/$Fname -m $DirName/Reconstruction/$Fname"
-./SourceCode/2D/Generate_SystemMatrix/GenerateSystemMatrix2D $args_required
+./src/GenerateSystemMatrix2D $args_required
 
 
 #******
@@ -29,4 +29,4 @@ args_required="-i $DirName/parameters/$Fname -j $DirName/parameters/$Fname -m $D
 args_MBIR="-i $DirName/parameters/$Fname -j $DirName/parameters/$Fname -k $DirName/parameters/$Fname "\
 "-m $DirName/Reconstruction/$Fname -s $DirName/measurements/$Fname -w $DirName/measurements/$Fname "\
 "-r $DirName/Reconstruction/$Fname"
-./SourceCode/2D/MBIR/MBIR_2DCT $args_MBIR
+./src/MBIR_2DCT $args_MBIR

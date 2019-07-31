@@ -1,30 +1,31 @@
-
-
 cd "$(dirname $0)"
 
 FLAGS="-Wall -pedantic -lm"
 
+
 # libs
 SOURCES=""
-SOURCES="${SOURCES} ../SourceCode/2D/MBIR/icd_2D.c"
-SOURCES="${SOURCES} ../SourceCode/2D/MBIR/initialize_2D.c"
-SOURCES="${SOURCES} ../SourceCode/2D/MBIR/recon_2D.c"
-SOURCES="${SOURCES} ../SourceCode/2D/Generate_SystemMatrix/A_comp_2D.c"
-SOURCES="${SOURCES} ../SourceCode/3D/MBIR/initialize_3D.c"
-SOURCES="${SOURCES} ../SourceCode/3D/MBIR/icd_3D.c"
-SOURCES="${SOURCES} ../SourceCode/3D/MBIR/recon_3D.c"
-SOURCES="${SOURCES} ../SourceCode/3D/Generate_SystemMatrix/A_comp_3D.c"
-SOURCES="${SOURCES} ../SourceCode/allocate.c"
-SOURCES="${SOURCES} ../SourceCode/MBIRModularUtils_2D.c"
-SOURCES="${SOURCES} ../SourceCode/MBIRModularUtils_3D.c"
-SOURCES="${SOURCES} ../SourceCode/MBIRModularUtils_3D.c"
-SOURCES="${SOURCES} ../SourceCode/MBIRModularUtils_3D.c"
+SOURCES="${SOURCES} ../src/icd_2D.c"
+SOURCES="${SOURCES} ../src/initialize_2D.c"
+SOURCES="${SOURCES} ../src/recon_2D.c"
+SOURCES="${SOURCES} ../src/A_comp_2D.c"
+SOURCES="${SOURCES} ../src/initialize_3D.c"
+SOURCES="${SOURCES} ../src/icd_3D.c"
+SOURCES="${SOURCES} ../src/recon_3D.c"
+SOURCES="${SOURCES} ../src/A_comp_3D.c"
+SOURCES="${SOURCES} ../src/allocate.c"
+SOURCES="${SOURCES} ../src/MBIRModularUtils_2D.c"
+SOURCES="${SOURCES} ../src/MBIRModularUtils_3D.c"
 
 # mains
-SOURCES="${SOURCES} ../SourceCode/2D/MBIR/mbir_2D.c"
-SOURCES="${SOURCES} ../SourceCode/2D/Generate_SystemMatrix/Gen_SysMatrix_2D.c"
-SOURCES="${SOURCES} ../SourceCode/3D/MBIR/mbir_3D.c"
-SOURCES="${SOURCES} ../SourceCode/3D/Generate_SystemMatrix/Gen_SysMatrix_3D.c"
+SOURCES="${SOURCES} ../src/mbir_2D.c"
+SOURCES="${SOURCES} ../src/Gen_SysMatrix_2D.c"
+SOURCES="${SOURCES} ../src/mbir_3D.c"
+SOURCES="${SOURCES} ../src/Gen_SysMatrix_3D.c"
+
+echo ${SOURCES}
+
+# compile
 gcc $FLAGS -c $SOURCES
 
 
