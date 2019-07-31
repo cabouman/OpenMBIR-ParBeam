@@ -10,6 +10,6 @@ detector spacing (mm):
 center of rotation offset (units-no. of channels, can be fractional):
 -6
 
-File containing list of View angles (rad) (wrt to where the executable-file is invoked):
-./ViewAngleList.txt
+File containing list of View angles (rad):
+ViewAngleList.txt
 
