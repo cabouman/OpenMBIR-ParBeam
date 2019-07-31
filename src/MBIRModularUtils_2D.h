@@ -8,6 +8,7 @@
 #include <string.h> /* strcmp */
 #include <getopt.h> /* getopt */
 #include "allocate.h"
+#include <libgen.h>
 
 /* Define constants that will be used in modular MBIR framework */
 #define MBIR_MODULAR_UTIL_VERSION "0.0";
