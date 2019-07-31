@@ -2,3 +2,5 @@
 *.DS_Store
 bin/*
 *._*
+*.2Dsysmatrix
+*.2Dimgdata
