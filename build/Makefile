@@ -19,21 +19,21 @@ all: main
 main: utils Gen_SysMatrix_2D mbir_2D Gen_SysMatrix_3D mbir_3D
 
 clean:
-	rm -f $(src)/*.o $(bin)/*.bin
+	rm -f $(src)/*.o $(bin)/*
 
 # --- linking -------------------------------------------------
 
 Gen_SysMatrix_2D:  utils
-	$(CC) $(FLAGS) $(UTILS) $(SRC_Gen_SysMatrix_2D) -o $(bin)/Gen_SysMatrix_2D.bin
+	$(CC) $(FLAGS) $(UTILS) $(SRC_Gen_SysMatrix_2D) -o $(bin)/Gen_SysMatrix_2D
 
 Gen_SysMatrix_3D:  utils
-	$(CC) $(FLAGS) $(UTILS) $(SRC_Gen_SysMatrix_3D) -o $(bin)/Gen_SysMatrix_3D.bin
+	$(CC) $(FLAGS) $(UTILS) $(SRC_Gen_SysMatrix_3D) -o $(bin)/Gen_SysMatrix_3D
 
 mbir_2D:  utils
-	$(CC) $(FLAGS) $(UTILS) $(SRC_MBIR_2D) -o $(bin)/mbir_2D.bin
+	$(CC) $(FLAGS) $(UTILS) $(SRC_MBIR_2D) -o $(bin)/mbir_2D
 
 mbir_3D:  utils
-	$(CC) $(FLAGS) $(UTILS) $(SRC_MBIR_3D) -o $(bin)/mbir_3D.bin
+	$(CC) $(FLAGS) $(UTILS) $(SRC_MBIR_3D) -o $(bin)/mbir_3D
 
 # --- compiling -------------------------------------------------
 
