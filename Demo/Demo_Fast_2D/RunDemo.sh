@@ -6,14 +6,14 @@ BIN="../../bin"
 Fname="shepp"
 
 #Generate System Matrix
-#<Executable File Name>  -i <InputFileName>[.imgparams] -j <InputFileName>[.sinoparams] -m <OutputFileName>[.2Dsysmatrix]
+#<Executable File Name>  -i <InputFileName>[.imgparams] -j <InputFileName>[.sinoparams] -m <OutputFileName>[.3Dsysmatrix]
 
-$BIN/Gen_SysMatrix_2D -i params/$Fname -j params/$Fname -m data/$Fname
+$BIN/Gen_SysMatrix_3D -i $Fname -j $Fname -m $Fname
 
 
 #Compute MBIR Reconstruction
 #./<Executable File Name> -i <InputFileName>[.imgparams] -j <InputFileName>[.sinoparams]  -k <InputFileName>[.reconparams] \
-# -m <InputFileName>[.2Dsysmatrix] -s <InputFileName>[.2Dsinodata] -w <InputFileName>[.2Dweightdata] -r <OutputFileName>[.2Dimgdata] \
-# Additional option (for initial image): -v <InitialImageFileName>[.2Dimgdata]
+# -m <InputFileName>[.3Dsysmatrix] -s <InputFileName>[.3Dsinodata] -w <InputFileName>[.3Dweightdata] -r <OutputFileName>[.3Dimgdata] \
+# Additional option (for initial image): -v <InitialImageFileName>[.3Dimgdata]
 
-$BIN/mbir_2D -i params/$Fname -j params/$Fname -k params/$Fname -m data/$Fname -s data/$Fname -w data/$Fname -r recon/$Fname
+$BIN/mbir_3D -i $Fname -j $Fname -k $Fname -m $Fname -s sino/$Fname -w weight/$Fname -r recon/$Fname
