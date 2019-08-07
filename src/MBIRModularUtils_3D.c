@@ -28,6 +28,7 @@ int ReadSinoParams3DParallel(
     FILE *fp;
     char tag[200];
     char AngleListFileName[200];
+    char AngleListFileName_relative[200];
     int i;
     
     strcat(fname,".sinoparams"); /* append file extension */
@@ -88,8 +89,13 @@ int ReadSinoParams3DParallel(
     }
     
     fgets(tag, 200, fp);
-    fscanf(fp, "%s\n", AngleListFileName); /* List of View angles */
-    
+    fscanf(fp, "%s\n", AngleListFileName_relative); /* List of View angles */
+
+    char* dir = dirname(fname);
+
+    sprintf(AngleListFileName, "%s/%s", dir, AngleListFileName_relative); 
+    printf("%s\n", AngleListFileName);
+
     fclose(fp);
     
     /* Read in list of View Angles */
