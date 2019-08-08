@@ -3,7 +3,7 @@
 cd "$(dirname $0)"
 
 BIN="../../bin"
-Fname="shepp"
+Fname="afrl"
 
 #Generate System Matrix
 #<Executable File Name>  -i <InputFileName>[.imgparams] -j <InputFileName>[.sinoparams] -m <OutputFileName>[.3Dsysmatrix]
