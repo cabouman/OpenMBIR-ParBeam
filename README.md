@@ -41,4 +41,12 @@
        (ii) MBIR Reconstruction 
 
    (c) Format for command lines of the executable files are mentioned in the “run.sh” script, as well as in Documentation
+
+
+## Necessary Software
+
+(1) Python >= 3
+(2) Python Packages
+    - numpy
+    - pypng
  
