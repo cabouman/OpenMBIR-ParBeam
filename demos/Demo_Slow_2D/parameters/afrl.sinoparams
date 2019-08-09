@@ -1,0 +1,15 @@
+number of channels:
+1024
+
+number of views:
+225
+
+detector spacing (mm):
+0.0000625
+
+center of rotation offset (units-no. of channels, can be fractional)):
+23
+
+File containing list of View angles (rad) (wrt to where the executable-file is invoked):
+./Data/2D/Demo_Slow/parameters/ViewAngleList.txt
+

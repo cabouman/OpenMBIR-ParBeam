@@ -1,0 +1,25 @@
+Number of detector channels per slice:
+512
+
+Number of sinogram views per slice:
+288
+
+Spacing between Detector Channels (mm):
+0.9765625
+
+center of rotation offset (units-no. of channels, can be fractional)):
+-6
+
+Number of slices:
+1
+
+Spacing between slices (mm):
+0.9765625
+
+First Slice Index:
+1
+
+File containing list of View angles (rad) (wrt to where the executable-file is invoked):
+shepp.ViewAngleList.txt
+
+
