@@ -17,7 +17,3 @@ $BIN/Gen_SysMatrix_3D -i $Fname -j $Fname -m $Fname
 # Additional option (for initial image): -v <InitialImageFileName>[.3Dimgdata]
 
 $BIN/mbir_3D -i $Fname -j $Fname -k $Fname -m $Fname -s sino/$Fname -w weight/$Fname -r recon/$Fname
-
-
-
-python  ../../IO-Utils/convertRecon.py --imgparams $Fname --images recon/$Fname
