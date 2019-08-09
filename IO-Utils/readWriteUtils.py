@@ -47,7 +47,7 @@ def readImgParams(fName):
     return par
 
 
-def readImages(fPattern, N1, N2):
+def read2DFilePattern(fPattern, N1, N2):
     # This function can accept a file pattern with globbing wildcards.
     # When files file_01.ext, file_02.ext, ... exist, fPattern="file_[0-9]*.ext"
     # will grab them all
@@ -71,12 +71,17 @@ def writeImage2png(image, fName):
         image2list = image.tolist()
         writer.write(f, image2list)
 
+def readImages(fRoot_imgparams, fRoot_images):
+    # reads all image files, normalizes [min, max] to [0,1] and saves as 16-bit png's
+
+    fName_imgparams = fRoot_imgparams + '.imgparams'
+    imgparams = readImgParams(fRoot_imgparams + '.imgparams')
+
+    fPattern = f'{fRoot_images}_slice[0-9]*.2Dimgdata'
+    x, fNames = read2DFilePattern(fPattern, imgparams['Nx'], imgparams['Ny'])
 
 
-
-
-
-
+    return x
 
 
 
