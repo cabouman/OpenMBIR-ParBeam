@@ -1,47 +1,33 @@
 # OpenMBIR 
-## BASELINE MBIR RECONSTRUCTION SOFTWARE FOR 2D and 3D PARALLEL-BEAM  CT
+BASELINE MBIR RECONSTRUCTION SOFTWARE FOR 2D and 3D PARALLEL-BEAM  CT
 
-## HARDWARE REQUIREMENTS:
-   Single core CPU
 
-## Necessary Software
-  Compiler: GCC compiler
-  Python >= 3
-  Python Packages
-    - numpy
-    - pypng
+## Software Requirements
+1. gcc compiler
+2. Python 3 or later
+3. Python Packages
+   * numpy
+   * matplotlib
  
 
-## INSTRUCTIONS:
+## Instructions
 
-1) To compile the code, cd into the src directory and type "make"
+1) Install the required software
+
+2) Compile the code. From the main directory run `cd src && make && cd ~-`. The executables will be stored in the `bin` folder. 
    
-2) Run demos:
-   (a) For fast demo, run the scripts "Demo/2D/Demo_Fast.sh" or "Demo/3D/Demo_Fast.sh".
-   (b) For slow demo, run the scripts "Demo/2D/Demo_Slow.sh" or "Demo/3D/Demo_Slow.sh".
+3) Run the demos
+   * In the `demos` folder there are fast and slow 2D and 3D demos
+   * To run a demo execute the respective `runDemo.sh` script.
+   * To display the result run the `displayResult.sh` script.
+   
+   The `displayResult.sh` script makes use of the python IO Utilities in `IO-Utils`. You can use these utilities to read the images into a python numpy array.
 
-3) Display the result using MATLAB :
-   Run the script “DisplayResult.m” located under the directory “DisplayResult/<2D or 3D>/Demo_<TYPE>/”
-   where TYPE = either “Fast” or “Slow”
 
+## Reconstructing Your Own Data
 
-## SUPPLMENTARY DETAILS:
-
-1) Executable files for the 2 portions of the code-package are located under the directories:
-
-   (a) SourceCode/<2D or 3D>/Generate_SystemMatrix/
-   (b) SourceCode/<2D or 3D>/MBIR/
-
-2) Run scripts :
-  
-   (a) The scripts “Demo_<TYPE>.sh” are wrapper (higher-level) scripts to the “run.sh” script under the directory “Data/<2D or 3D>/Demo_<TYPE>/” ;
-       where TYPE = either “Fast” , “Slow” or “User”
-
-   (b) The “run.sh” script invokes the executable files through command line for the purposes of :
-       (i)   Generation of System Matrix
-       (ii) MBIR Reconstruction 
-
-   (c) Format for command lines of the executable files are mentioned in the “run.sh” script, as well as in Documentation
+1) To be
+2) added later ...
 
 
 
