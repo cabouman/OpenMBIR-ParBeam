@@ -13,7 +13,7 @@
 ## INSTRUCTIONS:
 
 1) Compile the code-package:
-   Run the script "./build/build.sh" to compile the 2D and 3D code packages. 
+   To compile the code, cd into the src and type "make"
    
 2) Run demos:
    (a) For fast demo, run the scripts "Demo/2D/Demo_Fast.sh" or "Demo/3D/Demo_Fast.sh".
