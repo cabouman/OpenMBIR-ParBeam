@@ -12,8 +12,7 @@
 
 ## INSTRUCTIONS:
 
-1) Compile the code-package:
-   To compile the code, cd into the src and type "make"
+1) To compile the code, cd into the src and type "make"
    
 2) Run demos:
    (a) For fast demo, run the scripts "Demo/2D/Demo_Fast.sh" or "Demo/3D/Demo_Fast.sh".
