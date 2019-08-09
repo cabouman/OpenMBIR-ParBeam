@@ -2,19 +2,21 @@
 ## BASELINE MBIR RECONSTRUCTION SOFTWARE FOR 2D and 3D PARALLEL-BEAM  CT
 
 ## HARDWARE REQUIREMENTS:
-   RAM requirement is 128MB for a quick demo (“Demo_Fast.sh” Shepp-Logan Phantom Data)
-   RAM requirement is 4GB or a slow demo,  run the script “Demo_Slow.sh” (FeOOH Data)
+   Single core CPU
 
-## SOFTWARE REQUIREMENTS:
-  Operating system: Microsoft Windows, Mac OS X, Linux.  
-  Compiler: GCC compiler.
-  MATLAB
+## Necessary Software
+  Compiler: GCC compiler
+  Python >= 3
+  Python Packages
+    - numpy
+    - pypng
+ 
 
 ## INSTRUCTIONS:
 
-1) To compile the code, cd into the src and type "make"
+1) To compile the code, cd into the src directory and type "make"
    
-2) Run demos:\\
+2) Run demos:
    (a) For fast demo, run the scripts "Demo/2D/Demo_Fast.sh" or "Demo/3D/Demo_Fast.sh".
    (b) For slow demo, run the scripts "Demo/2D/Demo_Slow.sh" or "Demo/3D/Demo_Slow.sh".
 
@@ -42,10 +44,4 @@
    (c) Format for command lines of the executable files are mentioned in the “run.sh” script, as well as in Documentation
 
 
-## Necessary Software
 
-(1) Python >= 3
-(2) Python Packages
-    - numpy
-    - pypng
- 
