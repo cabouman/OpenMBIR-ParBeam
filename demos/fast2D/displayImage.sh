@@ -6,4 +6,4 @@ BIN="../../bin"
 Fname="shepp"
 
 
-../../IO-Utils/convertRecon.py --imgparams $Fname --images recon/$Fname
+../../IO-Utils/displayImage.py --imgparams $Fname --images recon/$Fname
