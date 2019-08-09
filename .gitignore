@@ -4,4 +4,5 @@ bin/*
 *._*
 *.2Dsysmatrix
 *.2Dimgdata
-
+*.png
+*__pycache__*
