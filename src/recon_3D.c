@@ -97,6 +97,10 @@ void MBIRReconstruct3D(
         
         for (l = 0; l < N; l++)
         {
+            if(i%100==0)
+            {
+                printf("\r\tProgress = %2.f %%", (float)l/N*100.0); fflush(stdout);
+            }
             j = order[l];          /* Voxel index from randomized list */
             XYPixelIndex = j%Nxy ; /* Pixel Index within a given slice */
             SliceIndex = j/Nxy ;   /* Slice Index*/

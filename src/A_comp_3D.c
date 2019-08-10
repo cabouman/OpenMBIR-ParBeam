@@ -296,8 +296,13 @@ struct SysMatrix2D *ComputeSysMatrix3DParallel(
 		TempColumn.RowIndex = (int *)get_spc(MaxNnonzero, sizeof(int));
         TempColumn.Value = (float *)get_spc(MaxNnonzero, sizeof(float));
     
+        printf("\n");
 		for (i = 0; i < A->Ncolumns; i++)
 		{
+            if(i%100==0)
+            {
+                printf("\r\tProgress = %2.1f %%", (float)i/A->Ncolumns*100.0); fflush(stdout);
+            }
             ComputeSysMatrixColumn3DParallel(i, sinoparams, imgparams, pix_prof, &TempColumn);
 
                 A->column[i].Nnonzero = TempColumn.Nnonzero;
@@ -310,7 +315,7 @@ struct SysMatrix2D *ComputeSysMatrix3DParallel(
 					A->column[i].RowIndex[r] = TempColumn.RowIndex[r];
 				}
 		}
-
+        printf("\n");
 		free((void *)TempColumn.Value);
 		free((void *)TempColumn.RowIndex);
 
