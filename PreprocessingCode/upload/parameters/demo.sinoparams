@@ -1,0 +1,24 @@
+Number of detector channels per slice:
+1024
+
+Number of sinogram views per slice:
+900
+
+Spacing between Detector Channels (mm):
+6.25e-05
+
+center of rotation offset (units-no. of channels, can be fractional)):
+0.0
+
+Number of slices:
+22
+
+Spacing between slices (mm):
+6.25e-05
+
+First Slice Index:
+500
+
+File containing list of View angles (rad) (wrt to where the executable-file is invoked):
+./parameters/ViewAngleList.txt
+
