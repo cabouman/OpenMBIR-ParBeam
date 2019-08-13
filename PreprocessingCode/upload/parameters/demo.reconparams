@@ -23,7 +23,7 @@ Prior weight for nearest voxel neighbors from adjacent slices, b_interslice:
 1.0
 
 Stop threshold for convergence (%):
-0.01
+0.1
 
 Maximum number of ICD iterations:
 150
