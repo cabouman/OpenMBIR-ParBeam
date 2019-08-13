@@ -1,3 +1,5 @@
+#!/usr/bin/env python3
+
 import sys, os, shutil
 from PyQt5.QtWidgets import *
 from PyQt5.QtGui import *
