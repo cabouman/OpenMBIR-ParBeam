@@ -20,7 +20,7 @@ int main(int argc, char *argv[])
 	/* read input arguments and parameters */
 	readParamsSysMatrix(&cmdline, &imgparams, &sinoparams);
     
-    fprintf(stdout, "\nGeneration of System Matrix takes about 8 minutes for this Demo. Please Wait patiently ... \n");
+    fprintf(stdout, "\nGeneration of System Matrix ... \n");
     
     /* Compute Pixel-Detector Profile */
     PixelDetector_profile = ComputePixelProfile3DParallel(&sinoparams, &imgparams);  /* pixel-detector profile function */
