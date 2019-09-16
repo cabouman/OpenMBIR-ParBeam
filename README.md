@@ -4,6 +4,7 @@ BASELINE MBIR RECONSTRUCTION SOFTWARE FOR 2D and 3D PARALLEL-BEAM CT
 
 ## Software Requirements
 1. gcc compiler
+2. OpenMP API
 2. Python 3 or later
 3. Python Packages
    * numpy
