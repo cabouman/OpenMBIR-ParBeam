@@ -154,7 +154,7 @@ void readCmdLineMBIR(int argc, char *argv[], struct CmdLineMBIR *cmdline)
     }
     
     /* get options */
-    while ((ch = getopt(argc, argv, "i:j:k:m:s:w:r:v:")) != EOF)
+    while ((ch = getopt(argc, argv, "i:j:k:m:s:w:r:t:v")) != EOF)
     {
         switch (ch)
         {
@@ -193,9 +193,14 @@ void readCmdLineMBIR(int argc, char *argv[], struct CmdLineMBIR *cmdline)
                 sprintf(cmdline->ReconImageDataFile, "%s", optarg);
                 break;
             }
-            case 'v':
+            case 't':
             {
                 sprintf(cmdline->InitImageDataFile, "%s", optarg);
+                break;
+            }
+            // Reserve this for verbose-mode flag
+            case 'v':
+            {
                 break;
             }
             default:
@@ -217,7 +222,7 @@ void PrintCmdLineUsage(char *ExecFileName)
     fprintf(stdout, "\nCommand line Format for Executable File %s : \n", ExecFileName);
     fprintf(stdout, "%s -i <InputFileName>[.imgparams] -j <InputFileName>[.sinoparams]  -k <InputFileName>[.reconparams] \
 -m <InputFileName>[.2Dsysmatrix] -s <InputProjectionsBaseFileName> -w <InputWeightsBaseFileName> -r <OutputImageBaseFileName> \n",ExecFileName);
-    fprintf(stdout, "\nAdditional option (to read in initial image from hard disk): -v <InitialImageBaseFileName> \n\n");
+    fprintf(stdout, "\nAdditional option (to read in initial image from hard disk): -t <InitialImageBaseFileName> \n\n");
     fprintf(stdout, "Note : The necessary extensions for certain input files are mentioned above within a \"[]\" symbol above \n");
     fprintf(stdout, "However, they are NOT to be included as part of the file name in the command line arguments \n\n");
     fprintf(stdout, "The below instructions pertain to the -s, -w and -r options in the above Command line format: \n");
