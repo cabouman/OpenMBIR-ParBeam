@@ -610,10 +610,11 @@ int ReadReconParamsQGGMRF3D(char *fname, struct ReconParamsQGGMRF3D *reconparams
     
     fgets(tag, 200, fp);
     fscanf(fp, "%lf\n", &(reconparams->StopThreshold));
-    if(reconparams->StopThreshold <= 0){
-        fprintf(stderr,"ERROR in ReadReconParamsQGGMRF3D: Stop Threshold in %% must be greater than zero \n");
-        exit(-1);
-    }
+    //SJK: allow 0 (or negative) StopThreshold to disable and "run maximum iterations"
+    //if(reconparams->StopThreshold <= 0){
+    //    fprintf(stderr,"ERROR in ReadReconParamsQGGMRF3D: Stop Threshold in %% must be greater than zero \n");
+    //    exit(-1);
+    //}
     
     fgets(tag, 200, fp);
     fscanf(fp, "%d\n",  &(reconparams->MaxIterations));
