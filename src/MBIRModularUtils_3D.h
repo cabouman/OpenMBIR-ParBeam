@@ -80,7 +80,7 @@ struct ReconParamsQGGMRF3D
   double b_diag;          /* Relative diagonal neighbor weight in (x,y) plane [default = 1/sqrt(2)] */
   double b_interslice;    /* Relative neighbor weight along z direction [default = 1] */
     
-  int Positivity;         /* Options: MBIR_MODULAR_YES or MBIR_MODULAR_NO */
+  int Positivity;         /* Positivity constraint: 1=yes, 0=no */
   double StopThreshold;   /* Stopping threshold in percent */
   int MaxIterations;      /* Maximum number of iterations */
     
