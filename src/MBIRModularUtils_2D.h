@@ -30,6 +30,7 @@
 #define MBIR_MODULAR_MAX_NUMBER_OF_SLICE_DIGITS 4 /* allows up to 10,000 slices */
 
 #define PI 3.1415926535897932384
+#define MUWATER 0.0202527   /* mm-1 */
 #define mu2hu(Mu, MuAir, MuWater) (1000.0*(Mu-MuAir)/(MuWater-MuAir)) /* (mm^-1) to HU units conversion */
 #define hu2mu(HU, MuAir, MuWater) (HU*(MuWater-MuAir)/1000.0)+MuAir   /* (mm^-1) to HU units conversion */
 
@@ -89,7 +90,7 @@ struct ReconParamsQGGMRF2D
                           /* If SigmaY=0, then it is estimated */
   double b_nearest;       /* Relative nearest neighbor weight [default = 1] */
   double b_diag;          /* Relative diagonal neighbor weight in (x,y) plane [default = 1/sqrt(2)] */
-  int Positivity;         /* Options: MBIR_MODULAR_YES or MBIR_MODULAR_NO */
+  int Positivity;         /* Positivity constraint: 1=yes, 0=no */
   double StopThreshold;   /* Stopping threshold in percent */
   int MaxIterations;      /* Maximum number of iterations */
     

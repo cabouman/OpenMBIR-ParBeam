@@ -19,15 +19,6 @@
                     /* Each detector channel is "split" into LEN_DET smaller elements ... */
                     /* to account for detector sensitivity variation across its aperture */
 
-/* Command Line structure for Generating System matrix */
-struct CmdLineSysGen
-{
-    char imgparamsFileName[200];  /* input file */
-    char sinoparamsFileName[200]; /* input file */
-    char SysMatrixFileName[200]; /* output file */
-};
-
-
 /* The System matrix does not vary with slice for 3-D Parallel Geometry */
 /* So, the method of compuatation is same as that of 2-D Parallel Geometry */
 
@@ -35,12 +26,5 @@ struct CmdLineSysGen
 float **ComputePixelProfile3DParallel(struct SinoParams3DParallel *sinoparams, struct ImageParams3D *imgparams);
 /* Compute System Matrix for 3D Parallel Beam Geometry*/
 struct SysMatrix2D *ComputeSysMatrix3DParallel(struct SinoParams3DParallel *sinoparams, struct ImageParams3D *imgparams, float **pix_prof);
-/* Read Command line */
-void readCmdLineSysGen(int argc, char *argv[], struct CmdLineSysGen *cmdline);
-/* Wrapper to read in system matrix parameters from Command line */
-void readParamsSysMatrix(struct CmdLineSysGen *cmdline, struct ImageParams3D *imgparams, struct SinoParams3DParallel *sinoparams);
-/* Print correct usage of Command Line*/
-void PrintCmdLineUsage(char *ExecFileName);
-int CmdLineHelp(char *string);
 
 #endif
