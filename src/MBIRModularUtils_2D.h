@@ -79,26 +79,6 @@ struct Image2D
 };
 
 
-/* Reconstruction Parameters Data Structure */
-struct ReconParamsQGGMRF2D
-{
-  double p;               /* q-GGMRF p parameter */
-  double q;               /* q-GGMRF q parameter (q=2 is typical choice) */
-  double T;               /* q-GGMRF T parameter */
-  double SigmaX;          /* q-GGMRF sigma_x parameter (mm-1) */
-  double SigmaY;          /* Scaling constant for weight matrix (W<-W/SigmaY^2); */
-                          /* If SigmaY=0, then it is estimated */
-  double b_nearest;       /* Relative nearest neighbor weight [default = 1] */
-  double b_diag;          /* Relative diagonal neighbor weight in (x,y) plane [default = 1/sqrt(2)] */
-  int Positivity;         /* Positivity constraint: 1=yes, 0=no */
-  double StopThreshold;   /* Stopping threshold in percent */
-  int MaxIterations;      /* Maximum number of iterations */
-    
-  double InitImageValue;  /* Initial Condition pixel value. In our examples usually chosen as ... */
-                          /* Attenuation coefficient of water (mm^-1) [default = 0.0202527 mm-1] */
-};
-
-
 /* VS- Introduced this to make coding easier and modular (easier extension to 3D tomography applications) */
 /* Sparse Column Vector - Data Structure */
 struct SparseColumn
@@ -218,20 +198,12 @@ int WriteSysMatrix2D(
 int FreeSysMatrix2D(
   struct SysMatrix2D *A);      /* Input: Free all memory from data structure */
 
-/**************************************************/
-/* Utilities for reading in reconstruction params */
-/**************************************************/
-
-int ReadReconParamsQGGMRF2D(
-                             char *fname,
-                             struct ReconParamsQGGMRF2D *reconparams);
 
 /***********************************/
 /* Miscellanous Functions         */
 /* Remove or shift them out later */
 /***********************************/
 
-void printReconParamsQGGMRF2D(struct ReconParamsQGGMRF2D *reconparams);
 void printImageParams2D(struct ImageParams2D *imgparams);
 void printSinoParams2DParallel(struct SinoParams2DParallel *sinoparams);
 

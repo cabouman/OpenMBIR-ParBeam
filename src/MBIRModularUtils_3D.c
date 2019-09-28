@@ -1,7 +1,12 @@
-#include "MBIRModularUtils_3D.h"
-#include "MBIRModularUtils_2D.h"
+
+#include <stdlib.h>
+#include <stdio.h>
 #include <string.h>
-#include <libgen.h>
+#include <libgen.h>  /* for dirname */
+#include "allocate.h"
+#include "MBIRModularUtils_2D.h"
+#include "MBIRModularUtils_3D.h"
+
 
 /*************************************************/
 /*  Utilities for reading/printing .param files  */
@@ -372,7 +377,7 @@ int ReadReconParamsQGGMRF3D(
 			ptr=strtok(NULL,":\n\r");
 		}
 		if(ptr!=NULL) sscanf(ptr,"%s",fieldval_s);
-		printf("|%s|%s|\n",fieldname,fieldval_s);
+		//printf("|%s|%s|\n",fieldname,fieldval_s);
 
 		if(strcmp(fieldname,"PriorModel")==0)
 		{
@@ -532,7 +537,7 @@ int ReadSinoData3DParallel(
     SingleSliceSinogram.sinoparams.NChannels = NChannels;
     SingleSliceSinogram.sinoparams.NViews = NViews;
  
-    printf("\nReading 3-D Projection Data ... \n");
+    //printf("Reading 3-D Projection Data ... \n");
     
     for(i=0;i<NSlices;i++)
     {
@@ -550,8 +555,8 @@ int ReadSinoData3DParallel(
             exit(-1);
         }
     }
-    
-    free((void *)sliceindex); 
+
+    free((void *)sliceindex);
 
     return 0;
 }
@@ -568,21 +573,21 @@ int ReadWeights3D(
     char *sliceindex;
     int i,NSlices,NChannels,NViews,FirstSliceNumber;
     struct Sino2DParallel SingleSliceSinogram;
-    
+
     strcat(fname,"_slice"); /* <fname>_slice */
     sliceindex= (char *)malloc(MBIR_MODULAR_MAX_NUMBER_OF_SLICE_DIGITS);
-    
+
     NSlices = sinogram->sinoparams.NSlices ;
     NChannels = sinogram->sinoparams.NChannels;
     NViews = sinogram->sinoparams.NViews;
     FirstSliceNumber = sinogram->sinoparams.FirstSliceNumber;
-    
+
     /* Copy necessary slice information */
     SingleSliceSinogram.sinoparams.NChannels = NChannels;
     SingleSliceSinogram.sinoparams.NViews = NViews;
-    
-    printf("\nReading 3-D Sinogram Weights Data ... \n");
-    
+
+    //printf("Reading 3-D Sinogram Weights Data ... \n");
+
     for(i=0;i<NSlices;i++)
     {
         SingleSliceSinogram.weight = sinogram->weight[i]; /* pointer to beginning of data for i-th slice */
@@ -599,7 +604,7 @@ int ReadWeights3D(
             exit(-1);
         }
     }
-    free((void *)sliceindex); 
+    free((void *)sliceindex);
     return 0;
 }
 
@@ -644,7 +649,7 @@ int WriteSino3DParallel(
             exit(-1);
         }
     }
-    free((void *)sliceindex); 
+    free((void *)sliceindex);
     return 0;
 }
 
@@ -652,7 +657,7 @@ int WriteSino3DParallel(
 /* Utility for writing out weights for 3D parallel beam sinogram data */
 /* Returns 0 if no error occurs */
 int WriteWeights3D(
-    char *fname,        /* Input: Writes sinogram weights to <fname>_slice<n>.2Dweightdata for given slice range */
+    char *fname,	/* Input: Writes sinogram weights to <fname>_slice<n>.2Dweightdata for given slice range */
     struct Sino3DParallel *sinogram) /* Input: Sinogram parameters and data */
 {
     char slicefname[200];
@@ -672,7 +677,7 @@ int WriteWeights3D(
     SingleSliceSinogram.sinoparams.NChannels = NChannels;
     SingleSliceSinogram.sinoparams.NViews = NViews;
     
-    printf("\nWriting 3-D Sinogram Weights Data ... \n");
+    printf("Writing 3-D Sinogram Weights Data ... \n");
     
     for(i=0;i<NSlices;i++)
     {
@@ -690,28 +695,24 @@ int WriteWeights3D(
             exit(-1);
         }
     }
-    free((void *)sliceindex); 
+    free((void *)sliceindex);
     return 0;
 }
 
 /* Utility for allocating memory for Sino */
 /* Returns 0 if no error occurs */
-int AllocateSinoData3DParallel(
-                               struct Sino3DParallel *sinogram)  /* Input: Sinogram parameters data structure */
+int AllocateSinoData3DParallel(struct Sino3DParallel *sinogram)  /* Input: Sinogram parameters data structure */
 {
-    printf("\nAllocating Sinogram Memory ... \n");
-    
+    //printf("Allocating Sinogram Memory ... \n");
     sinogram->sino   = (float **)multialloc(sizeof(float), 2, sinogram->sinoparams.NSlices,sinogram->sinoparams.NViews * sinogram->sinoparams.NChannels);
     sinogram->weight = (float **)multialloc(sizeof(float), 2, sinogram->sinoparams.NSlices,sinogram->sinoparams.NViews * sinogram->sinoparams.NChannels);
- 
     return 0;
 }
 
 
 /* Utility for freeing memory allocated for ViewAngles and Sino */
 /* Returns 0 if no error occurs */
-int FreeSinoData3DParallel(
-                           struct Sino3DParallel *sinogram)  /* Input: Sinogram parameters data structure */
+int FreeSinoData3DParallel(struct Sino3DParallel *sinogram)  /* Input: Sinogram parameters data structure */
 {
     multifree(sinogram->sino,2);
     multifree(sinogram->weight,2);
@@ -721,7 +722,7 @@ int FreeSinoData3DParallel(
 /*******************************************/
 /* Utilities for reading/writing 3D images */
 /*******************************************/
-           
+
 /* Utility for reading 3D image data */
 /* Warning: Memory must be allocated before use */
 /* Returns 0 if no error occurs */
@@ -762,7 +763,7 @@ int ReadImage3D(
             exit(-1);
         }
     }
-    free((void *)sliceindex); 
+    free((void *)sliceindex);
     return 0;
 }
            
@@ -790,7 +791,7 @@ int WriteImage3D(
     SingleSliceImage.imgparams.Nx = Nx;
     SingleSliceImage.imgparams.Ny = Ny;
     
-    printf("\nWriting 3-D Image ... \n");
+    //printf("Writing 3-D Image ... \n");
     for(i=0;i<Nz;i++)
     {
         SingleSliceImage.image = Image->image[i];  /* pointer to beginning of data for i-th slice */
@@ -807,7 +808,7 @@ int WriteImage3D(
             exit(-1);
         }
     }
-    free((void *)sliceindex); 
+    free((void *)sliceindex);
     return 0;
 }
            

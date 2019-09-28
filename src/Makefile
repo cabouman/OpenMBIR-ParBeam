@@ -1,5 +1,5 @@
 CC=gcc
-FLAGS=-Wall -pedantic -lm
+FLAGS=-Wall -pedantic
 
 
 bin=../bin
@@ -22,10 +22,10 @@ clean:
 # --- linking -------------------------------------------------
 
 Gen_SysMatrix_3D:  utils
-	$(CC) $(FLAGS) $(UTILS) $(SRC_Gen_SysMatrix_3D) -o $(bin)/Gen_SysMatrix_3D
+	$(CC) $(FLAGS) $(UTILS) $(SRC_Gen_SysMatrix_3D) -o $(bin)/Gen_SysMatrix_3D -lm
 
 mbir_3D:  utils
-	$(CC) $(FLAGS) $(UTILS) $(SRC_MBIR_3D) -o $(bin)/mbir_3D
+	$(CC) $(FLAGS) $(UTILS) $(SRC_MBIR_3D) -o $(bin)/mbir_3D -lm
 
 # --- compiling -------------------------------------------------
 
