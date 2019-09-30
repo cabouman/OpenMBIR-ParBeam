@@ -1,10 +1,7 @@
 #ifndef _ALLOCATE_INC
 #define _ALLOCATE_INC
 
-#include <stdio.h>
 #include <stdlib.h>
-#include <string.h>
-#include <stdarg.h>
 
 void *get_spc(int num, size_t size);
 void *mget_spc(int num, size_t size);

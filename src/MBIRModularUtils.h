@@ -1,81 +1,7 @@
-#ifndef MBIR_MODULAR_UTILS_3D_H
-#define MBIR_MODULAR_UTILS_3D_H
+#ifndef MBIR_MODULAR_UTILS_H
+#define MBIR_MODULAR_UTILS_H
 
-/* The following utilities are used for managing data structures and files associated */
-/* with the Modular MBIR Framework */
-
-/* 3D Sinogram Parameters */
-struct SinoParams3DParallel
-{
-    int NChannels;         /* Number of channels in detector */
-    float DeltaChannel;    /* Detector spacing (mm) */
-    float CenterOffset;    /* Offset of center-of-rotation ... */
-                           /* Computed from center of detector in increasing direction (no. of channels) */
-                           /* This can be fractional though */
-    int NViews;            /* Number of view angles */
-    float *ViewAngles;     /* Array of NTheta view angle entries in degrees */
-    
-    int NSlices;            /* Number of rows (slices) stored in Sino array */
-    float DeltaSlice;      /* Spacing along row (slice) direction (mm) */
-    int FirstSliceNumber;   /* Row (slice) index coresponding to first row (slice) stored in Sino array */
-                            /* This is in absolute coordinates and is used if a partial set of slices is needed */
-                            /* Otherwise, it is set to 0. */
-};
-
-
-/* 3D Sinogram Data Structure */
-struct Sino3DParallel
-{
-  struct SinoParams3DParallel sinoparams; /* Sinogram Parameters */
-  float **sino;           /* The array is indexed by sino[Slice][ View * NChannels + Channel ] */
-                          /* If data array is empty, then set Sino = NULL */
-  float **weight;         /* Weights for each measurement */
-};
-
-/* 3D Image parameters*/
-struct ImageParams3D
-{
-    int Nx;                 /* Number of columns in image */
-    int Ny;                 /* Number of rows in image */
-    float Deltaxy;          /* Spacing between pixels in x and y direction (mm) */
-    float ROIRadius;        /* Radius of the reconstruction (mm) */
-    
-    float DeltaZ;           /* Spacing between pixels in z direction (mm) [This should be equal to DeltaSlice */
-    int Nz;                 /* Number of rows (slices) in image */
-    int FirstSliceNumber;   /* Detector row (slice) index cooresponding to first row (slice) stored in Image array */
-                            /* This is in absolute coordinates and is used if a partial set of slices is needed */
-                            /* Otherwise, it is set to 0. */
-};
-
-/* 3D Image Data Structure */
-struct Image3D
-{
-  struct ImageParams3D imgparams; /* Image parameters */
-  float **image;                  /* The array is indexed by image[SliceIndex][ Row * Nx + Column ], Nx=NColumns */
-                                  /* If data array is empty, then set Image = NULL */
-};
-
-
-/* Reconstruction Parameters Data Structure */
-struct ReconParamsQGGMRF3D
-{
-  double p;               /* q-GGMRF p parameter */
-  double q;               /* q-GGMRF q parameter (q=2 is typical choice) */
-  double T;               /* q-GGMRF T parameter */
-  double SigmaX;          /* q-GGMRF sigma_x parameter (mm-1) */
-  double SigmaY;          /* Scaling constant for weight matrix (W<-W/SigmaY^2); */
-                          /* If SigmaY=0, then it is estimated */
-  double b_nearest;       /* Relative nearest neighbor weight [default = 1] */
-  double b_diag;          /* Relative diagonal neighbor weight in (x,y) plane [default = 1/sqrt(2)] */
-  double b_interslice;    /* Relative neighbor weight along z direction [default = 1] */
-    
-  int Positivity;         /* Positivity constraint: 1=yes, 0=no */
-  double StopThreshold;   /* Stopping threshold in percent */
-  int MaxIterations;      /* Maximum number of iterations */
-    
-  double InitImageValue;  /* Initial Condition pixel value. In our examples usually chosen as ... */
-};
-
+#include "MBIRModularDefs.h"
 
 /**********************************************/
 /*  Utilities for reading/writing 3D sinogram */
@@ -178,5 +104,94 @@ void printImageParams3D(struct ImageParams3D *imgparams);
 void printSinoParams3DParallel(struct SinoParams3DParallel *sinoparams);
 
 
-#endif /* MBIR_MODULAR_UTILS_3D_H */
+
+
+
+/**********************************************/
+/*  Utilities for reading/writing 2D sinogram */
+/**********************************************/
+
+/* Utility for writing out 2D parallel beam sinogram data */
+/* Returns 0 if no error occurs */
+int WriteSino2DParallel(
+	char *fname,				/* Input: Writes sinogram parameters to <fname>.2dsinodata */
+	struct Sino2DParallel *sinogram);	/* Input: Writes out sinogram parameters and data */
+
+int WriteWeights2D(
+	char *fname,				/* Input: Writes sinogram measurement weights to <fname>.wght */
+	struct Sino2DParallel *sinogram);	/* Input: Sinogram data structure */
+
+/* Utility for reading 2D parallel beam sinogram data */
+/* Warning: Memory must be allocated before use */
+/* Returns 0 if no error occurs */
+int ReadSinoData2DParallel(
+	char *fname,				/* Input: Reads sinogram data from <fname>.2dsinodata */
+	struct Sino2DParallel *sinogram);	/* Input/Output: Uses sinogram parameters and reads into sinogram data structure */
+
+int ReadWeights2D(
+	char *fname,				/* Input: Read sinogram weights from <fname>.wght */
+	struct Sino2DParallel *sinogram);	/* Input: Stores weights into Sinogram Data Structure  */
+
+/* Utility for allocating memory for Sino */
+/* Returns 0 if no error occurs */
+int AllocateSinoData2DParallel(
+	struct Sino2DParallel *sinogram);	/* Input: Sinogram parameters data structure */
+
+/* Utility for freeing memory allocated for ViewAngles and Sino */
+/* Returns 0 if no error occurs */
+int FreeSinoData2DParallel(
+	struct Sino2DParallel *sinogram);	/* Input: Sinogram parameters data structure */
+
+/*******************************************/
+/* Utilities for reading/writing 2D images */
+/*******************************************/
+
+/* Utility for reading 2D image parameters and data */
+/* Warning: Memory must be allocated before use */
+/* Returns 0 if no error occurs */
+int ReadImage2D(
+	char *fname,		/* Input: Reads 2D image data from <fname>.2dimgdata */
+	struct Image2D *Image);	/* Output: Reads into data structure */
+
+/* Utility for writing 2D image parameters and data */
+/* Returns 0 if no error occurs */
+int WriteImage2D(
+	char *fname,		/* Input: Writes to image data to <fname>.2dimgdata */
+	struct Image2D *Image);	/* Input: Image data structure (both data and params) */
+
+/* Utility for allocating memory for Image */
+/* Returns 0 if no error occurs */
+int AllocateImageData2D(
+	struct Image2D *Image);	/* Input: Image data structure */
+
+/* Utility for freeing memory for Image */
+/* Returns 0 if no error occurs */
+int FreeImageData2D(
+	struct Image2D *Image);	/* Input: Image data structure */
+
+/******************************************************/
+/* Utilities for reading/writing sparse System matrix */
+/******************************************************/
+
+/* Utility for reading/allocating the Sparse System Matrix */
+/* Returns 0 if no error occurs */
+/* Warning: Memory is allocated for the data structure inside subroutine */
+int ReadSysMatrix2D(
+	char *fname,		/* Input: Basename of Sparse System Matrix file <fname>.2dsysmatrix */
+	struct SysMatrix2D *A);	/* Ouput: Sparse system matrix structure */
+
+/* Utility for writing the Sparse System Matrix */
+/* Returns 0 if no error occurs */
+int WriteSysMatrix2D(
+	char *fname,		/* Input: Basename of output file <fname>.2dsysmatrix */
+	struct SysMatrix2D *A);	/* Input: Sparse system matrix structure */
+
+/* Utility for freeing memory from Sparse System Matrix */
+/* Returns 0 if no error occurs */
+int FreeSysMatrix2D(
+	struct SysMatrix2D *A);	/* Input: Free all memory from data structure */
+
+
+
+#endif /* MBIR_MODULAR_UTILS_H */
 

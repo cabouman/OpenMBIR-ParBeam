@@ -1,3 +1,8 @@
+
+#include <stdio.h>
+#include <math.h>
+
+#include "MBIRModularDefs.h"
 #include "icd_3D.h"
 
 

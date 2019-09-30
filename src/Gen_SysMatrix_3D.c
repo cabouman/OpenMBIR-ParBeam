@@ -1,10 +1,14 @@
-#include "MBIRModularUtils_3D.h"
-#include "MBIRModularUtils_2D.h"
-#include "allocate.h"
-#include "A_comp_3D.h"
+
 #include <stdio.h>
 #include <stdlib.h>
+#include <string.h>
+#include <getopt.h>
 #include <time.h>
+
+#include "MBIRModularDefs.h"
+#include "MBIRModularUtils.h"
+#include "allocate.h"
+#include "A_comp_3D.h"
 
 /* Command Line structure for Generating System matrix */
 struct CmdLineSysGen
