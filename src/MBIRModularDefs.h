@@ -103,42 +103,21 @@ struct ReconParamsQGGMRF3D
 
 
 
-/* The following utilities are used for managing data structures and files associated */
-/* with the Modular MBIR Framework */
-
-struct SinoParams2DParallel
-{
-   int NChannels;	/* Number of channels in detector */
-   float DeltaChannel;	/* Detector spacing (mm) */
-   float CenterOffset;	/* Offset of center-of-rotation ... */
-			/* Computed from center of detector in increasing direction (no. of channels) */
-			/* This can be fractional */
-   int NViews;		/* Number of view angles */
-   float *ViewAngles;	/* Array of NTheta view angle entries in degrees */
-};
 
 /* 2D Sinogram Data Structure */
 struct Sino2DParallel
 {
-   struct SinoParams2DParallel sinoparams; /* Sinogram Parameters */
+   struct SinoParams3DParallel sinoparams; /* Sinogram Parameters */
    float *sino;		/* Array of sinogram entries indexed by sino[NChannels*view + channel] */
    float *weight;	/* Weights for each measurement */
 			/* If data arrays empty, then set the pointer = NULL */
 };
 
-/* 2D Image parameters*/
-struct ImageParams2D
-{
-   int Nx;		/* Number of columns in image */
-   int Ny;		/* Number of rows in image */
-   float Deltaxy;	/* Spacing between pixels in x and y direction (mm) */
-   float ROIRadius;	/* Radius of the reconstruction (mm) */
-};
 
 /* 2D Image Data Structure */
 struct Image2D
 {
-   struct ImageParams2D imgparams;	/* Image parameters */
+   struct ImageParams3D imgparams;	/* Image parameters */
    float *image;	/* Array of image entries indexed by image[Nx*row + column] */
 			/* If data array is empty, then set image = NULL */
 };
