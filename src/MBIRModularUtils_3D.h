@@ -1,15 +1,6 @@
 #ifndef MBIR_MODULAR_UTILS_3D_H
 #define MBIR_MODULAR_UTILS_3D_H
 
-#include <stdio.h>
-#include <stdlib.h>
-#include <math.h>
-#include <string.h> /* strcmp */
-#include <getopt.h> /* getopt */
-
-#include "MBIRModularUtils_2D.h"
-#include "allocate.h"
-
 /* The following utilities are used for managing data structures and files associated */
 /* with the Modular MBIR Framework */
 
@@ -36,8 +27,7 @@ struct SinoParams3DParallel
 struct Sino3DParallel
 {
   struct SinoParams3DParallel sinoparams; /* Sinogram Parameters */
-  float **sino;           /* Array of sinogram entries */
-                          /* The array is indexed by 3DSino[Slice][ View * NChannels + Channel ] */
+  float **sino;           /* The array is indexed by sino[Slice][ View * NChannels + Channel ] */
                           /* If data array is empty, then set Sino = NULL */
   float **weight;         /* Weights for each measurement */
 };
@@ -61,8 +51,7 @@ struct ImageParams3D
 struct Image3D
 {
   struct ImageParams3D imgparams; /* Image parameters */
-  float **image;                  /* Output: Array of image entries */
-                                  /* The array is indexed by image[SliceIndex][ Row * Nx + Column ], Nx=NColumns */
+  float **image;                  /* The array is indexed by image[SliceIndex][ Row * Nx + Column ], Nx=NColumns */
                                   /* If data array is empty, then set Image = NULL */
 };
 
@@ -85,17 +74,12 @@ struct ReconParamsQGGMRF3D
   int MaxIterations;      /* Maximum number of iterations */
     
   double InitImageValue;  /* Initial Condition pixel value. In our examples usually chosen as ... */
-                          /* Attenuation coefficient of water (mm^-1) [default = 0.0202527 mm-1] */
- 
-  int NSlices;            /* Number of slices to be reconstructed */
-  int FirstSliceNumber;   /* Index of first slice to reconstruct in absolute coordinates */
- 
 };
+
 
 /**********************************************/
 /*  Utilities for reading/writing 3D sinogram */
 /**********************************************/
-
 
 /* Utility for reading 3D parallel beam sinogram parameters */
 /* Returns 0 if no error occurs */
@@ -195,5 +179,4 @@ void printSinoParams3DParallel(struct SinoParams3DParallel *sinoparams);
 
 
 #endif /* MBIR_MODULAR_UTILS_3D_H */
-
 
