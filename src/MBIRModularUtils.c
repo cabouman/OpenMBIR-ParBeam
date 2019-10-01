@@ -895,250 +895,40 @@ int FreeSysMatrix2D(struct SysMatrix2D *A)
 
 
 
-/**********************************************/
-/*  Utilities for reading/writing 2D sinogram */
-/**********************************************/
+/************************************************************/
+/*     Strictly 2D sinogram/image memory allocation     */
+/************************************************************/
 
-/* Utility for reading 2D parallel beam sinogram data */
-/* Warning: Memory must be allocated before use */
+/* Utility for allocating memory for 2D sinogram and weights */
 /* Returns 0 if no error occurs */
-int ReadSinoData2DParallel(
-                           char *fname,               /* Input: Reads sinogram data from <fname>.2dsinodata */
-                           struct Sino2DParallel *sinogram)  /* Input/Output: Uses sinogram parameters and reads sinogram data into data structure */
-{
-    FILE *fp;
-    int M;
-    
-    strcat(fname,".2Dsinodata"); /* append file extension */
-    
-    /* NOTE: As of now only write out sinogram data, no parameters */
-    /* Fix that in next version of code */
-    
-    if ((fp = fopen(fname, "r")) == NULL)
-    {
-        fprintf(stderr, "ERROR in ReadSino2DParallel: can't open file %s.\n", fname);
-        exit(-1);
-    }
-    
-    M = sinogram->sinoparams.NViews * sinogram->sinoparams.NChannels;
-    
-    if(fread(sinogram->sino,sizeof(float),M,fp)!=M)
-    {
-        fprintf(stderr, "ERROR in ReadSino2DParallel: file terminated early \n");
-        fclose(fp);
-        exit(1);
-    }
-    fclose(fp);
-    return 0;
-}
-
-
-/* Utility for reading weights for 2D sinogram projections data */
-/* Warning: Memory must be allocated before use */
-/* Returns 0 if no error occurs */
-int ReadWeights2D(
-                  char *fname,             /* Input: Read sinogram measurement weights from <fname>.2Dweightdata */
-                  struct Sino2DParallel *sinogram) /* Input: Stores weights into Sinogram Data Structure  */
-{
-    FILE *fp;
-    int M;
-    
-    strcat(fname,".2Dweightdata"); /* append file extension */
-    
-    /* NOTE: As of now only write out sinogram data, no parameters */
-    /* Fix that in next version of code */
-    
-    if ((fp = fopen(fname, "r")) == NULL)
-    {
-        fprintf(stderr, "ERROR in ReadWeights2D: can't open file %s.\n", fname);
-        exit(-1);
-    }
-    
-    M = sinogram->sinoparams.NViews * sinogram->sinoparams.NChannels;
-    
-    if(fread(sinogram->weight,sizeof(float),M,fp)!=M)
-    {
-        fprintf(stderr, "ERROR in ReadWeights2D: file terminated early \n");
-        fclose(fp);
-        exit(1);
-    }
-    
-    fclose(fp);
-    
-    return 0;
-}
-
-
-/* Utility for writing out 2D parallel beam sinogram parameters and data */
-/* Returns 0 if no error occurs */
-int WriteSino2DParallel(
-                        char *fname,            /* Input: Writes sinogram parameters to <fname>.sinoparams and data (if available) to <fname>.2Dsinodata */
-                        struct Sino2DParallel *sinogram) /* Input: Writes out sinogram parameters and data */
-{
-    FILE *fp;
-    int M;
-    
-    strcat(fname,".2Dsinodata"); /* append file extension */
-    
-    /* NOTE: As of now only write out sinogram data, no parameters */
-    /* Fix that in next version of code */
-    
-    if ((fp = fopen(fname, "w")) == NULL)
-    {
-        fprintf(stderr, "ERROR in WriteSino2DParallel: can't open file %s.\n", fname);
-        exit(-1);
-    }
-    
-    M = sinogram->sinoparams.NViews * sinogram->sinoparams.NChannels;
-    
-    if(fwrite(sinogram->sino,sizeof(float),M,fp)!=M)
-    {
-        fprintf(stderr, "ERROR in WriteSino2DParallel: file terminated early \n");
-        fclose(fp);
-        exit(1);
-    }
-    
-    fclose(fp);
-    
-    return 0;
-    
-}
-
-/* Utility for writing weights for 2D sinogram projections data */
-/* Returns 0 if no error occurs */
-int WriteWeights2D(
-                   char *fname,              /* Input: Writes sinogram measurement weights to <fname>.2Dweightdata */
-                   struct Sino2DParallel *sinogram)   /* Input: Sinogram data structure */
-{
-    FILE *fp;
-    int M;
-    
-    strcat(fname,".2Dweightdata"); /* append file extension */
-    
-    /* NOTE: As of now only write out sinogram data, no parameters */
-    /* Fix that in next version of code */
-    
-    if ((fp = fopen(fname, "w")) == NULL)
-    {
-        fprintf(stderr, "ERROR in WriteWeights: can't open file %s.\n", fname);
-        exit(-1);
-    }
-    
-    M = sinogram->sinoparams.NViews * sinogram->sinoparams.NChannels;
-    
-    if(fwrite(sinogram->weight,sizeof(float),M,fp)!=M)
-    {
-        fprintf(stderr, "ERROR in WriteWeights: file terminated early \n");
-        fclose(fp);
-        exit(1);
-    }
-    
-    fclose(fp);
-    
-    return 0;
-}
-
-
-/* Utility for allocating memory for Sino */
-/* Returns 0 if no error occurs */
-int AllocateSinoData2DParallel(
-                               struct Sino2DParallel *sinogram)  /* Input: Sinogram parameters data structure */
+int AllocateSinoData2DParallel(struct Sino2DParallel *sinogram)
 {
     sinogram->sino   = (float *)get_spc(sinogram->sinoparams.NViews * sinogram->sinoparams.NChannels, sizeof(float));
     sinogram->weight = (float *)get_spc(sinogram->sinoparams.NViews * sinogram->sinoparams.NChannels, sizeof(float));
- 
     return 0;
 }
 
-
-/* Utility for freeing memory allocated for ViewAngles and Sino */
+/* Utility for freeing 2D sinogram memory including sino, weights and ViewAngles */
 /* Returns 0 if no error occurs */
-int FreeSinoData2DParallel(
-                           struct Sino2DParallel *sinogram)  /* Input: Sinogram parameters data structure */
+int FreeSinoData2DParallel(struct Sino2DParallel *sinogram)
 {
     free((void *)sinogram->sino);
     free((void *)sinogram->weight);
+    free((void *)sinogram->sinoparams.ViewAngles);
     return 0;
 }
 
-
-/*******************************************/
-/* Utilities for reading/writing 2D images */
-/*******************************************/
-
-/* Here image data read in units of (mm^-1) */
-int ReadImage2D(char *fname, struct Image2D *Image)
-{
-    FILE *fp;
-    int N;
-    
-    strcat(fname,".2Dimgdata"); /* append file extension */
-    
-    if ((fp = fopen(fname, "r")) == NULL)
-    {
-        fprintf(stderr, "ERROR in ReadImage2D: can't open file %s.\n", fname);
-        exit(-1);
-    }
-    
-    N=Image->imgparams.Nx * Image->imgparams.Ny ;
-    
-    if(fread(Image->image,sizeof(float),N,fp)!=N)
-    {
-        fprintf(stderr, "ERROR in ReadImage2D: file terminated early \n");
-        fclose(fp);
-        exit(1);
-    }
-    
-    
-    fclose(fp);
-    return 0;
-}
-
-/* Utility for writing 2D image parameters and data */
+/* Utility for allocating memory for 2D Image */
 /* Returns 0 if no error occurs */
-int WriteImage2D(
-                 char *fname,              /* Input: Writes to image parameters to <fname>.imgparams and data (if available) to <fname>.2dimgdata */
-                 struct Image2D *Image)    /* Input: Image data structure (both data and params) */
-{
-    FILE *fp;
-    int N;
-    
-    strcat(fname,".2Dimgdata"); /* append file extension */
-    
-    if ((fp = fopen(fname, "w")) == NULL)
-    {
-        fprintf(stderr, "ERROR in WriteImage2D: can't open file %s.\n", fname);
-        exit(-1);
-    }
-    
-    N=Image->imgparams.Nx * Image->imgparams.Ny ;
-    
-    if(fwrite(Image->image,sizeof(float),N,fp)!=N)
-    {
-        fprintf(stderr, "ERROR in ReadImage2D: file terminated early \n");
-        fclose(fp);
-        exit(1);
-    }
-    
-    fclose(fp);
-    return 0;
-}
-
-
-/* Utility for allocating memory for Image */
-/* Returns 0 if no error occurs */
-int AllocateImageData2D(
-                        struct Image2D *Image)    /* Input: Image data structure */
+int AllocateImageData2D(struct Image2D *Image)
 {
     Image->image = (float *)get_spc(Image->imgparams.Nx * Image->imgparams.Ny, sizeof(float));
-    
     return 0;
 }
 
-/* Utility for freeing memory for Image */
+/* Utility for freeing memory for 2D Image */
 /* Returns 0 if no error occurs */
-int FreeImageData2D(
-                    struct Image2D *Image)    /* Input: Image data structure */
+int FreeImageData2D(struct Image2D *Image)
 {
     free((void *)Image->image);
     return 0;

@@ -134,69 +134,29 @@ int FreeSysMatrix2D(struct SysMatrix2D *A);
 
 
 
+/************************************************************/
+/*     Strictly 2D sinogram and image memory allocation     */
+/************************************************************/
 
-/**********************************************/
-/*  Utilities for reading/writing 2D sinogram */
-/**********************************************/
-
-/* Utility for writing out 2D parallel beam sinogram data */
-/* Returns 0 if no error occurs */
-int WriteSino2DParallel(
-	char *fname,				/* Input: Writes sinogram parameters to <fname>.2dsinodata */
-	struct Sino2DParallel *sinogram);	/* Input: Writes out sinogram parameters and data */
-
-int WriteWeights2D(
-	char *fname,				/* Input: Writes sinogram measurement weights to <fname>.wght */
-	struct Sino2DParallel *sinogram);	/* Input: Sinogram data structure */
-
-/* Utility for reading 2D parallel beam sinogram data */
-/* Warning: Memory must be allocated before use */
-/* Returns 0 if no error occurs */
-int ReadSinoData2DParallel(
-	char *fname,				/* Input: Reads sinogram data from <fname>.2dsinodata */
-	struct Sino2DParallel *sinogram);	/* Input/Output: Uses sinogram parameters and reads into sinogram data structure */
-
-int ReadWeights2D(
-	char *fname,				/* Input: Read sinogram weights from <fname>.wght */
-	struct Sino2DParallel *sinogram);	/* Input: Stores weights into Sinogram Data Structure  */
-
-/* Utility for allocating memory for Sino */
+/* Utility for allocating memory for 2D sinogram and weights */
 /* Returns 0 if no error occurs */
 int AllocateSinoData2DParallel(
-	struct Sino2DParallel *sinogram);	/* Input: Sinogram parameters data structure */
+	struct Sino2DParallel *sinogram);  /* 2D Sinogram data+params data structure */
 
-/* Utility for freeing memory allocated for ViewAngles and Sino */
+/* Utility for freeing 2D sinogram memory including sino, weights and ViewAngles */
 /* Returns 0 if no error occurs */
 int FreeSinoData2DParallel(
-	struct Sino2DParallel *sinogram);	/* Input: Sinogram parameters data structure */
+	struct Sino2DParallel *sinogram);  /* 2D Sinogram data+params data structure */
 
-/*******************************************/
-/* Utilities for reading/writing 2D images */
-/*******************************************/
-
-/* Utility for reading 2D image parameters and data */
-/* Warning: Memory must be allocated before use */
-/* Returns 0 if no error occurs */
-int ReadImage2D(
-	char *fname,		/* Input: Reads 2D image data from <fname>.2dimgdata */
-	struct Image2D *Image);	/* Output: Reads into data structure */
-
-/* Utility for writing 2D image parameters and data */
-/* Returns 0 if no error occurs */
-int WriteImage2D(
-	char *fname,		/* Input: Writes to image data to <fname>.2dimgdata */
-	struct Image2D *Image);	/* Input: Image data structure (both data and params) */
-
-/* Utility for allocating memory for Image */
+/* Utility for allocating memory for 2D Image */
 /* Returns 0 if no error occurs */
 int AllocateImageData2D(
-	struct Image2D *Image);	/* Input: Image data structure */
+	struct Image2D *Image);  /* 2D Image data+params data structure */
 
-/* Utility for freeing memory for Image */
+/* Utility for freeing memory for 2D Image */
 /* Returns 0 if no error occurs */
 int FreeImageData2D(
-	struct Image2D *Image);	/* Input: Image data structure */
-
+	struct Image2D *Image);  /* 2D Image data+params data structure */
 
 
 
