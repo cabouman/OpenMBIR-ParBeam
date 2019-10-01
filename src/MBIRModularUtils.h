@@ -3,106 +3,134 @@
 
 #include "MBIRModularDefs.h"
 
-/**********************************************/
-/*  Utilities for reading/writing 3D sinogram */
-/**********************************************/
+/*****************************************************/
+/*   Parameter file parsing and printing utilities   */
+/*****************************************************/
 
 /* Utility for reading 3D parallel beam sinogram parameters */
 /* Returns 0 if no error occurs */
 int ReadSinoParams3DParallel(
-  char *fname,                               /* Input: Reads sinogram parameters from <fname>.sinoparams */
-  struct SinoParams3DParallel *sinoparams);  /* Output: Reads sinogram parameters into data structure */
+	char *basename,			/* Source base filename, i.e. <basename>.sinoparams */
+	struct SinoParams3DParallel *sinoparams);  /* Sinogram params data structure */
 
-/* Utility for writing out 3D parallel beam sinogram parameters and data */
+/* Utility for reading 3D image parameters */
 /* Returns 0 if no error occurs */
-int WriteSino3DParallel(
-                        char *fname,             /* Input: Writes sinogram parameters to <fname>.sinoparams and data (if available) to ... */
-                                                 /* <fname>_slice<InitialIndex>.2Dsinodata to <fname>_slice<FinalIndex>.2Dsinodata  */
-                        struct Sino3DParallel *sinogram); /* Input: Writes out sinogram parameters and data */
+int ReadImageParams3D(
+	char *basename,			/* Source base filename, i.e. <basename>.imgparams */
+	struct ImageParams3D *imgparams);  /* Image params data structure */
 
-/* Utility for writing out weights for 3D parallel beam sinogram data */
+/* Utility for reading QGGMRF3D reconstruction parameters */
 /* Returns 0 if no error occurs */
-int WriteWeights3D(
-                char *fname,             /* Input: Writes sinogram measurement weights <fname>_slice<InitialIndex>.2Dweightdata to <fname>_slice<FinalIndex>.2Dweightdata */
-                struct Sino3DParallel *sinogram); /* Input: Sinogram data structure */
+int ReadReconParamsQGGMRF3D(
+	char *basename,			/* Source base filename, i.e. <basename>.reconparams */
+	struct ReconParamsQGGMRF3D *reconparams);  /* Reconstruction parameters data structure */
 
-/* Utility for reading 3D parallel beam sinogram data */
+/* Parameter printing utilities */
+void printReconParamsQGGMRF3D(struct ReconParamsQGGMRF3D *reconparams);
+void printImageParams3D(struct ImageParams3D *imgparams);
+void printSinoParams3DParallel(struct SinoParams3DParallel *sinoparams);
+
+
+/*******************************/
+/*     General purpose I/O     */
+/*******************************/
+
+/* General purpose utilities for reading/writing array of floats to/from a file */
+/*   Exit codes:                                                      */
+/*      0 = success                                                   */
+/*      1 = failure: can't open file                                  */
+/*      2 = failure: read from (or write to) file terminated early    */
+int ReadFloatArray(
+	char *fname,	/* source filename */
+	float *array,	/* pointer to destination */
+	int N);		/* Number of single precision elements to read */
+
+int WriteFloatArray(
+	char *fname,	/* destination filename */
+	float *array,	/* pointer to source array */
+	int N);		/* Number of single precision elements to write */
+
+
+/**********************************************/
+/*     Sinogram I/O and memory allocation     */
+/**********************************************/
+
+/* Utilities for reading 3D parallel beam projections and weights */
 /* Warning: Memory must be allocated before use */
 /* Returns 0 if no error occurs */
 int ReadSinoData3DParallel(
-                           char *fname,               /* Input: Reads sinogram data from <fname>_slice<InitialIndex>.2Dsinodata to <fname>_slice<FinalIndex>.2Dsinodata */
-                           struct Sino3DParallel *sinogram);  /* Input/Output: Uses sinogram parameters and reads sinogram data into data structure */
+	char *basename,		/* Source base filename, i.e. <basename>_slice<Index>.2Dsinodata for given index range */
+	struct Sino3DParallel *sinogram);  /* Sinogram data+params data structure */
 
 int ReadWeights3D(
-                 char *fname,             /* Input: Read sinogram measurement weights from <fname>_slice<InitialIndex>.2Dweightdata to <fname>_slice<FinalIndex>.2Dweightdata */
-                 struct Sino3DParallel *sinogram); /* Input: Stores weights into Sinogram Data Structure  */
+	char *basename,		/* Source base filename, i.e. <basename>_slice<Index>.2Dweightdata for given index range */ 
+	struct Sino3DParallel *sinogram);  /* Sinogram data+params data structure */
 
-
-/* Utility for allocating memory for Sino */
+/* Utilities for writing 3D parallel beam projections and weights */
 /* Returns 0 if no error occurs */
-int AllocateSinoData3DParallel(
-                               struct Sino3DParallel *sinogram);  /* Input: Sinogram parameters data structure */
+int WriteSino3DParallel(
+	char *basename,		/* Destination base filename, i.e. <basename>_slice<Index>.2Dsinodata for given index range */
+	struct Sino3DParallel *sinogram);  /* Sinogram data+params data structure */
 
-/* Utility for freeing memory allocated for ViewAngles and Sino */
+int WriteWeights3D(
+	char *basename,		/* Destination base filename, i.e. <basename>_slice<Index>.2Dweightdata for given index range */
+	struct Sino3DParallel *sinogram);  /* Sinogram data+params data structure */
+
+/* Utility that allocates memory for both sinogram and weights */
 /* Returns 0 if no error occurs */
-int FreeSinoData3DParallel(
-                           struct Sino3DParallel *sinogram); /* Input: Sinogram parameters data structure */
+int AllocateSinoData3DParallel(struct Sino3DParallel *sinogram);
 
-/*******************************************/
-/* Utilities for reading/writing 3D images */
-/*******************************************/
-
-/* VS : Utility for reading 3D Image parameters */
+/* Utility for freeing memory allocated for sinogram, weights and ViewAngles */
 /* Returns 0 if no error occurs */
-int ReadImageParams3D(
-  char *fname,                         /* Input: Reads image type parameter from <fname>.imgparams */
-  struct ImageParams3D *imgparams);    /* Output: Reads image parameters into data structure */
+int FreeSinoData3DParallel(struct Sino3DParallel *sinogram);
+
+
+/******************************************/
+/*     Image I/O and memory allocation    */
+/******************************************/
 
 /* Utility for reading 3D image data */
 /* Warning: Memory must be allocated before use */
 /* Returns 0 if no error occurs */
 int ReadImage3D(
-                char *fname,              /* Input: Reads 2D image data from <fname>_slice<InitialIndex>.2Dimgdata to <fname>_slice<FinalIndex>.2Dimgdata */
-                struct Image3D *Image);   /* Output: Reads Image parameters and data (if available) into data structure */
+	char *basename,		/* Source base filename, i.e. <basename>_slice<Index>.2Dimgdata for given index range */ 
+	struct Image3D *Image);  /* Image data+params data structure */
 
-
-/* Utility for writing 3D image parameters and data */
+/* Utility for writing 3D image data */
 /* Returns 0 if no error occurs */
 int WriteImage3D(
-                 char *fname,              /* Input: Writes to image parameters to <fname>.imgparams and data (if available) to .. */
-                                           /* <fname>_slice<InitialIndex>.2Dimgdata to <fname>_slice<FinalIndex>.2Dimgdata */
-                 struct Image3D *Image);   /* Input: Image data structure (both data and params) */
+	char *basename,		/* Destination base filename, i.e. <basename>_slice<Index>.2Dimgdata for given index range */ 
+	struct Image3D *Image);  /* Image data+params data structure */
 
-
-/* Utility for allocating memory for Image */
+/* Utility for allocating memory for a 3D Image */
 /* Returns 0 if no error occurs */
-int AllocateImageData3D(
-                        struct Image3D *Image);  /* Input: Image data structure */
+int AllocateImageData3D(struct Image3D *Image);
 
-
-/* Utility for freeing memory for Image */
+/* Utility for freeing memory a 3D Image */
 /* Returns 0 if no error occurs */
-int FreeImageData3D(
-                    struct Image3D *Image);    /* Input: Image data structure */
+int FreeImageData3D(struct Image3D *Image);
 
 
-/**************************************************/
-/* Utilities for reading in reconstruction params */
-/**************************************************/
+/*********************************************************/
+/*    Sparse system matrix I/O and memory allocation     */
+/*********************************************************/
 
-int ReadReconParamsQGGMRF3D(
-                             char *fname,
-                             struct ReconParamsQGGMRF3D *reconparams);
+/* Utility for reading/allocating the Sparse System Matrix */
+/* Returns 0 if no error occurs */
+/* Warning: Memory is allocated for the data structure inside subroutine */
+int ReadSysMatrix2D(
+	char *fname,		/* Source base filename, i.e. <fname>.2dsysmatrix */
+	struct SysMatrix2D *A);	/* Sparse system matrix structure */
 
-/***********************************/
-/* Miscellanous Functions         */
-/* Remove or shift them out later */
-/***********************************/
+/* Utility for writing the Sparse System Matrix */
+/* Returns 0 if no error occurs */
+int WriteSysMatrix2D(
+	char *fname,		/* Destination base filename, i.e. <fname>.2dsysmatrix */
+	struct SysMatrix2D *A);	/* Sparse system matrix structure */
 
-void printReconParamsQGGMRF3D(struct ReconParamsQGGMRF3D *reconparams);
-void printImageParams3D(struct ImageParams3D *imgparams);
-void printSinoParams3DParallel(struct SinoParams3DParallel *sinoparams);
-
+/* Utility for freeing memory from Sparse System Matrix */
+/* Returns 0 if no error occurs */
+int FreeSysMatrix2D(struct SysMatrix2D *A);
 
 
 
@@ -169,27 +197,6 @@ int AllocateImageData2D(
 int FreeImageData2D(
 	struct Image2D *Image);	/* Input: Image data structure */
 
-/******************************************************/
-/* Utilities for reading/writing sparse System matrix */
-/******************************************************/
-
-/* Utility for reading/allocating the Sparse System Matrix */
-/* Returns 0 if no error occurs */
-/* Warning: Memory is allocated for the data structure inside subroutine */
-int ReadSysMatrix2D(
-	char *fname,		/* Input: Basename of Sparse System Matrix file <fname>.2dsysmatrix */
-	struct SysMatrix2D *A);	/* Ouput: Sparse system matrix structure */
-
-/* Utility for writing the Sparse System Matrix */
-/* Returns 0 if no error occurs */
-int WriteSysMatrix2D(
-	char *fname,		/* Input: Basename of output file <fname>.2dsysmatrix */
-	struct SysMatrix2D *A);	/* Input: Sparse system matrix structure */
-
-/* Utility for freeing memory from Sparse System Matrix */
-/* Returns 0 if no error occurs */
-int FreeSysMatrix2D(
-	struct SysMatrix2D *A);	/* Input: Free all memory from data structure */
 
 
 

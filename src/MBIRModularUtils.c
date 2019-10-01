@@ -29,8 +29,8 @@ void printSinoParams3DParallel(struct SinoParams3DParallel *sinoparams)
 /* Utility for reading 3D parallel beam sinogram parameters */
 /* Returns 0 if no error occurs */
 int ReadSinoParams3DParallel(
-	char *basename,					/* Input: Reads sinogram parameters from <fname>.sinoparams */
-	struct SinoParams3DParallel *sinoparams)	/* Output: Reads sinogram parameters into data structure */
+	char *basename,			/* Source base filename, i.e. <basename>.sinoparams */
+	struct SinoParams3DParallel *sinoparams)  /* Sinogram params data structure */
 {
 	FILE *fp;
 	char fname[200];
@@ -193,8 +193,8 @@ void printImageParams3D(struct ImageParams3D *imgparams)
 /* Utility for reading 2D Image parameters */
 /* Returns 0 if no error occurs */
 int ReadImageParams3D(
-	char *basename,				/* Input: Reads image type parameter from <fname>.imgparams */
-	struct ImageParams3D *imgparams)	/* Output: Reads image parameters into data structure */
+	char *basename,		/* Source base filename, i.e. <basename>.imgparams */
+	struct ImageParams3D *imgparams)  /* Image params data structure */
 {
 	FILE *fp;
 	char fname[200];
@@ -327,8 +327,8 @@ void printReconParamsQGGMRF3D(struct ReconParamsQGGMRF3D *reconparams)
 /* Utility for reading QGGMRF reconstruction parameters */
 /* Returns 0 if no error occurs */
 int ReadReconParamsQGGMRF3D(
-	char *basename,				/* base file name <fname>.reconparams */
-	struct ReconParamsQGGMRF3D *reconparams) /* recon parameters data structure */
+	char *basename,				/* Source base filename, i.e. <basename>.reconparams */
+	struct ReconParamsQGGMRF3D *reconparams)  /* Reconstruction parameters data structure */
 {
 	FILE *fp;
 	char fname[200];
@@ -510,9 +510,9 @@ int ReadReconParamsQGGMRF3D(
 }
 
 
-/**********************************************/
-/*  Utilities for reading/writing 3D sinogram */
-/**********************************************/
+/*******************************/
+/*     General purpose I/O     */
+/*******************************/
 
 /* General purpose utility for reading array of floats from a file */
 /* Exit codes:							*/
@@ -556,12 +556,17 @@ int WriteFloatArray(
 	return(0);
 }
 
+
+/**********************************************/
+/*     Sinogram I/O and memory allocation     */
+/**********************************************/
+
 /* Utility for reading 3D parallel beam sinogram data */
 /* Warning: Memory must be allocated before use */
 /* Returns 0 if no error occurs */
 int ReadSinoData3DParallel(
-    char *basename,   /* Input: Reads sinogram data from <basename>_slice<index>.2Dsinodata for given index range */
-    struct Sino3DParallel *sinogram)  /* Input/Output: Uses sinogram parameters and reads sinogram data into data structure */
+    char *basename,	/* Source base filename, i.e. <basename>_slice<Index>.2Dsinodata for given index range */
+    struct Sino3DParallel *sinogram)  /* Sinogram data+params data structure */
 {
     char fname[200];
     int i,NSlices,FirstSliceNumber,M,exitcode;
@@ -592,8 +597,8 @@ int ReadSinoData3DParallel(
 /* Warning: Memory must be allocated before use */
 /* Returns 0 if no error occurs */
 int ReadWeights3D(
-    char *basename,       /* Input: Reads sinogram data from <basename>_slice<index>.2Dweightdata for given index range */
-    struct Sino3DParallel *sinogram) /* Input/Output: Uses sinogram parameters and reads sinogram data into data structure */
+	char *basename,		/* Source base filename, i.e. <basename>_slice<Index>.2Dweightdata for given index range */
+	struct Sino3DParallel *sinogram)  /* Sinogram data+params data structure */
 {
     char fname[200];
     int i,NSlices,FirstSliceNumber,M,exitcode;
@@ -654,8 +659,8 @@ int WriteSino3DParallel(
 /* Utility for writing out weights for 3D parallel beam sinogram data */
 /* Returns 0 if no error occurs */
 int WriteWeights3D(
-    char *basename,	/* Input: Writes sinogram weights to <basename>_slice<n>.2Dweightdata for given slice range */
-    struct Sino3DParallel *sinogram) /* Input: Sinogram parameters and data */
+    char *basename,	/* Destination base filename, i.e. <basename>_slice<Index>.2Dweightdata for given index range */
+    struct Sino3DParallel *sinogram)  /* Sinogram data+params data structure */
 {
     char fname[200];
     int i,NSlices,FirstSliceNumber,M,exitcode;
@@ -681,20 +686,18 @@ int WriteWeights3D(
     return 0;
 }
 
-
 /* Utility for allocating memory for Sino */
 /* Returns 0 if no error occurs */
-int AllocateSinoData3DParallel(struct Sino3DParallel *sinogram)  /* Input: Sinogram parameters data structure */
+int AllocateSinoData3DParallel(struct Sino3DParallel *sinogram)  /* Input: Sinogram data+parameters structure */
 {
     sinogram->sino   = (float **)multialloc(sizeof(float), 2, sinogram->sinoparams.NSlices,sinogram->sinoparams.NViews * sinogram->sinoparams.NChannels);
     sinogram->weight = (float **)multialloc(sizeof(float), 2, sinogram->sinoparams.NSlices,sinogram->sinoparams.NViews * sinogram->sinoparams.NChannels);
     return 0;
 }
 
-
 /* Utility for freeing memory allocated for sinogram, weights and ViewAngles */
 /* Returns 0 if no error occurs */
-int FreeSinoData3DParallel(struct Sino3DParallel *sinogram)  /* Input: Sinogram parameters data structure */
+int FreeSinoData3DParallel(struct Sino3DParallel *sinogram)  /* Input: Sinogram data+parameters structure */
 {
     multifree(sinogram->sino,2);
     multifree(sinogram->weight,2);
@@ -703,16 +706,16 @@ int FreeSinoData3DParallel(struct Sino3DParallel *sinogram)  /* Input: Sinogram 
 }
 
 
-/*******************************************/
-/* Utilities for reading/writing 3D images */
-/*******************************************/
+/******************************************/
+/*     Image I/O and memory allocation    */
+/******************************************/
 
 /* Utility for reading 3D image data */
 /* Warning: Memory must be allocated before use */
 /* Returns 0 if no error occurs */
 int ReadImage3D(
-    char *basename,	/* Input: Reads 2D image data from <basename>_slice<n>.2Dimgdata for given slice range */
-    struct Image3D *Image)	/* Input/Output: Uses image parameters (dimensions) and reads images into structure */
+    char *basename,	/* Source base filename, i.e. <basename>_slice<Index>.2Dimgdata for given index range */
+    struct Image3D *Image)  /* Image data+params data structure */
 {
     char fname[200];
     int i,Nz,FirstSliceNumber,M,exitcode;
@@ -741,8 +744,8 @@ int ReadImage3D(
 /* Utility for writing 3D image data */
 /* Returns 0 if no error occurs */
 int WriteImage3D(
-    char *basename,	/* Input: Writes image data to <basename>_slice<n>.2Dimgdata for given slice range */
-    struct Image3D *Image)  /* Input: Image data structure (both data and params) */
+    char *basename,	/* Destination base filename, i.e. <basename>_slice<Index>.2Dimgdata for given index range */
+    struct Image3D *Image)  /* Image data+params data structure */
 {
     char fname[200];
     int i,Nz,FirstSliceNumber,M,exitcode;
@@ -768,7 +771,6 @@ int WriteImage3D(
     return 0;
 }
 
-
 /* Utility for allocating memory for Image */
 /* Returns 0 if no error occurs */
 int AllocateImageData3D(struct Image3D *Image)
@@ -787,56 +789,17 @@ int FreeImageData3D(struct Image3D *Image)
 
 
 
+/*********************************************************/
+/*    Sparse system matrix I/O and memory allocation     */
+/*********************************************************/
 
-
-/***************************************************/
-/*  Utilities for reading/writing 2D System matrix */
-/***************************************************/
-
-/* write the System matrix to hard drive */
-/* Utility for writing the Sparse System Matrix */
-/* Returns 0 if no error occurs */
-int WriteSysMatrix2D(
-                     char *fname,                /* Input: Basename of output file <fname>.2dsysmatrix */
-                     struct SysMatrix2D *A)      /* Input: Sparse system matrix structure */
-{
-    FILE *fp;
-    int i, Nnonzero, Ncolumns;
-    
-    strcat(fname,".2Dsysmatrix"); /* append file extension */
-    
-    if ((fp = fopen(fname, "w")) == NULL)
-    {
-        fprintf(stderr, "ERROR in WriteSysMatrix2D: can't open file %s.\n", fname);
-        exit(-1);
-    }
-    
-    Ncolumns = A->Ncolumns;
-    
-    for (i = 0; i < Ncolumns; i++)
-    {
-        Nnonzero = A->column[i].Nnonzero;
-        fwrite(&Nnonzero, sizeof(int), 1, fp);
-        
-        if(Nnonzero>0)
-        {
-            fwrite(A->column[i].RowIndex, sizeof(int), Nnonzero, fp);
-            fwrite(A->column[i].Value, sizeof(float), Nnonzero, fp);
-        }
-    }
-    
-    fclose(fp);
-    
-    return 0;
-}
-
-/* read the A matrix from hard drive */
 /* Utility for reading/allocating the Sparse System Matrix */
+/* NOTE: Memory is allocated for the data structure inside subroutine */
 /* Returns 0 if no error occurs */
 int ReadSysMatrix2D(
-                    char *fname,               /* Input: Basename of Sparse System Matrix file <fname>.2dsysmatrix */
-                    struct SysMatrix2D *A)     /* Ouput: Sparse system matrix structure */
-{                                              /* Warning: Memory is allocated for the data structure inside subroutine */
+    char *fname,	/* Source base filename, i.e. <fname>.2dsysmatrix */
+    struct SysMatrix2D *A)  /* Sparse system matrix structure */
+{
     FILE *fp;
     int i, Ncolumns, Nnonzero;
     
@@ -877,17 +840,48 @@ int ReadSysMatrix2D(
             }
         }
     }
-    
     fclose(fp);
-    
     return 0;
-    
+}
+
+
+/* Utility for writing the Sparse System Matrix */
+/* Returns 0 if no error occurs */
+int WriteSysMatrix2D(
+	char *fname,	/* Destination base filename, i.e. <fname>.2dsysmatrix */
+	struct SysMatrix2D *A)  /* Sparse system matrix structure */
+{
+    FILE *fp;
+    int i, Nnonzero, Ncolumns;
+
+    strcat(fname,".2Dsysmatrix"); /* append file extension */
+   
+    if ((fp = fopen(fname, "w")) == NULL)
+    {
+        fprintf(stderr, "ERROR in WriteSysMatrix2D: can't open file %s.\n", fname);
+        exit(-1);
+    }
+
+    Ncolumns = A->Ncolumns;
+
+    for (i = 0; i < Ncolumns; i++)
+    {
+        Nnonzero = A->column[i].Nnonzero;
+        fwrite(&Nnonzero, sizeof(int), 1, fp);
+
+        if(Nnonzero>0)
+        {
+            fwrite(A->column[i].RowIndex, sizeof(int), Nnonzero, fp);
+            fwrite(A->column[i].Value, sizeof(float), Nnonzero, fp);
+        }
+    }
+    fclose(fp);
+    return 0;
 }
 
 /* Utility for freeing memory from Sparse System Matrix */
 /* Returns 0 if no error occurs */
-int FreeSysMatrix2D(
-                    struct SysMatrix2D *A)       /* Input: Free all memory from data structure */
+int FreeSysMatrix2D(struct SysMatrix2D *A)
 {
     int i;
 
@@ -898,6 +892,7 @@ int FreeSysMatrix2D(
     }
     return 0;
 }
+
 
 
 /**********************************************/
