@@ -3,7 +3,7 @@
 
 
 /* Define constants that will be used in modular MBIR framework */
-#define MBIR_MODULAR_UTIL_VERSION "0.0";
+#define MBIR_MODULAR_UTIL_VERSION "2.2";
 
 #define MBIR_MODULAR_SINOTYPE_2DPARALLEL 0;
 #define MBIR_MODULAR_SINOTYPE_2DFAN 1; /* for future implementation */
