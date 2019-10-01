@@ -1,3 +1,13 @@
+
+#include <stdio.h>
+#include <stdlib.h>
+#include <math.h>
+#include <time.h>
+
+#include "MBIRModularDefs.h"
+#include "MBIRModularUtils.h"
+#include "allocate.h"
+#include "icd_3D.h"
 #include "recon_3D.h"
 
 #define EPSILON 0.0000001

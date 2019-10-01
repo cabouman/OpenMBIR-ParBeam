@@ -1,4 +1,10 @@
 
+#include <stdio.h>
+#include <stdlib.h>
+#include <math.h>
+
+#include "MBIRModularDefs.h"
+#include "allocate.h"
 #include "A_comp_3D.h"
 
 /******************************************************************/
@@ -31,7 +37,7 @@ float **ComputePixelProfile3DParallel(
 
 	pix_prof = (float **)get_img(LEN_PIX, sinoparams->NViews, sizeof(float));
 
-	pi = PI; /* defined in MBIRModularUtils_2D.h */
+	pi = PI; /* defined in MBIRModularDefs.h */
 	rc = sin(pi/4.0); /* Constant sin(pi/4) */
     
     /* For pixel-detector profile parameters .. */

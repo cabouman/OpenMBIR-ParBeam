@@ -1,3 +1,8 @@
+
+#include <stdio.h>
+#include <stdlib.h>
+#include <stdarg.h>
+
 #include "allocate.h"
 
 void *get_spc(int num, size_t size)

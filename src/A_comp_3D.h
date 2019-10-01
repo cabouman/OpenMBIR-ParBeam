@@ -1,15 +1,7 @@
 #ifndef _ACOMP_H_
 #define _ACOMP_H_
 
-#include <stdio.h>
-#include <stdlib.h>
-#include <string.h> /* strcmp */
-#include <math.h>
-#include <getopt.h> /* getopt */
-
-#include "MBIRModularUtils_3D.h"
-#include "MBIRModularUtils_2D.h"
-#include "allocate.h"
+#include "MBIRModularDefs.h"
 
 /* Computation options */
 #define WIDE_BEAM   /* Finite element analysis of detector channel, accounts for sensitivity variation across its aperture */

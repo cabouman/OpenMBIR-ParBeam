@@ -1,8 +1,9 @@
+
 #include <stdio.h>
 #include <stdlib.h>
 
-#include "MBIRModularUtils_3D.h"
-#include "MBIRModularUtils_2D.h"
+#include "MBIRModularDefs.h"
+#include "MBIRModularUtils.h"
 #include "allocate.h"
 #include "initialize_3D.h"
 #include "recon_3D.h"

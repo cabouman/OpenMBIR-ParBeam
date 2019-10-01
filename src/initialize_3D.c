@@ -1,3 +1,12 @@
+
+#include <stdio.h>
+#include <stdlib.h>
+#include <string.h>
+#include <getopt.h>
+
+#include "MBIRModularDefs.h"
+#include "MBIRModularUtils.h"
+#include "allocate.h"
 #include "initialize_3D.h"
 
 /* Initialize constant image */
