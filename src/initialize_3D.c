@@ -112,7 +112,7 @@ void readSystemParams  (
                          struct SinoParams3DParallel *sinoparams,
                          struct ReconParamsQGGMRF3D *reconparams)
 {
-    printf("\nReading Image, Sinogram and Reconstruction Parameters ... \n");
+    //printf("\nReading Image, Sinogram and Reconstruction Parameters ... \n");
     
     if(ReadImageParams3D(cmdline->ImageParamsFile, imgparams))
       {
@@ -129,7 +129,7 @@ void readSystemParams  (
         fprintf(stdout,"Error in reading reconstruction parameters \n");
         exit(-1);
       }
-          
+
     /* Tentatively initialize weights. Remove once this is read in directly from params file */
     NormalizePriorWeights3D(reconparams);
     
@@ -137,6 +137,21 @@ void readSystemParams  (
     printImageParams3D(imgparams);
     printSinoParams3DParallel(sinoparams);
     printReconParamsQGGMRF3D(reconparams);
+    fprintf(stdout,"\n");
+
+    /* Determine and SET number of slice index digits in data files */
+    int Ndigits = NumSinoSliceDigits(cmdline->SinoDataFile, sinoparams->FirstSliceNumber);
+    if(Ndigits==0)
+    {
+        fprintf(stderr,"Error: Can't read the first data file. Looking for any one of the following:\n");
+        for(int i=MBIR_MODULAR_MAX_NUMBER_OF_SLICE_DIGITS; i>0; i--)
+            fprintf(stderr,"\t%s_slice%.*d.2Dsinodata\n",cmdline->SinoDataFile, i, sinoparams->FirstSliceNumber);
+        exit(-1);
+    }
+    //printf("Detected %d slice index digits\n",Ndigits);
+    sinoparams->NumSliceDigits = Ndigits;
+    imgparams->NumSliceDigits = Ndigits;
+
 }
 
 /* Read Command-line */
