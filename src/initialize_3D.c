@@ -178,7 +178,7 @@ void readCmdLineMBIR(int argc, char *argv[], struct CmdLineMBIR *cmdline)
     }
     
     /* get options */
-    while ((ch = getopt(argc, argv, "i:j:k:m:s:w:r:t:v")) != EOF)
+    while ((ch = getopt(argc, argv, "i:j:k:m:s:w:r:t:p:v")) != EOF)
     {
         switch (ch)
         {
@@ -222,6 +222,14 @@ void readCmdLineMBIR(int argc, char *argv[], struct CmdLineMBIR *cmdline)
                 sprintf(cmdline->InitImageDataFile, "%s", optarg);
                 break;
             }
+            case 'p':
+            {
+                sprintf(cmdline->ProxMapImageDataFile, "%s", optarg);
+                fprintf(stderr,"Error: -p option -> Proximal Map prior yet to be implemented\n");
+                PrintCmdLineUsage(argv[0]);
+                exit(-1);
+                break;
+            }
             // Reserve this for verbose-mode flag
             case 'v':
             {
@@ -229,7 +237,7 @@ void readCmdLineMBIR(int argc, char *argv[], struct CmdLineMBIR *cmdline)
             }
             default:
             {
-                printf("\nError : Command line symbol not recongized\n");
+                fprintf(stderr,"Error : Command line symbol not recongized\n");
                 PrintCmdLineUsage(argv[0]);
                 exit(-1);
                 break;
@@ -241,25 +249,27 @@ void readCmdLineMBIR(int argc, char *argv[], struct CmdLineMBIR *cmdline)
 
 void PrintCmdLineUsage(char *ExecFileName)
 {
-    fprintf(stdout, "\nBASELINE MBIR RECONSTRUCTION SOFTWARE FOR 3D PARALLEL-BEAM  CT \n");
+    fprintf(stdout, "\nBASELINE MBIR RECONSTRUCTION SOFTWARE FOR 3D PARALLEL-BEAM  CT\n");
     fprintf(stdout, "build time: %s, %s\n", __DATE__,  __TIME__);
-    fprintf(stdout, "\nCommand line Format for Executable File %s : \n", ExecFileName);
+    fprintf(stdout, "\nCommand line Format for Executable File %s :\n", ExecFileName);
     fprintf(stdout, "%s -i <InputFileName>[.imgparams] -j <InputFileName>[.sinoparams]\n",ExecFileName);
     fprintf(stdout, "   -k <InputFileName>[.reconparams] -m <InputFileName>[.2Dsysmatrix]\n");
     fprintf(stdout, "   -s <InputProjectionsBaseFileName> -w <InputWeightsBaseFileName>\n");
     fprintf(stdout, "   -r <OutputImageBaseFileName>\n\n");
-    fprintf(stdout, "Additional option to read in initial image: -t <InitialImageBaseFileName> \n\n");
+    fprintf(stdout, "Additional options:\n");
+    fprintf(stdout, "   -t <InitialImageBaseFileName>   # Read initial image\n");
+    fprintf(stdout, "   -p <ProxMapImageBaseFileName>   # Read/run Proximal Map prior (TBD)\n\n");
     fprintf(stdout, "Note : The necessary extensions for certain input files are mentioned above within\n");
     fprintf(stdout, "a \"[]\" symbol above, however the extensions should be OMITTED in the command line\n\n");
-    fprintf(stdout, "The following instructions pertain to the -s, -w and -r options: \n");
+    fprintf(stdout, "The following instructions pertain to the -s, -w and -r options:\n");
     fprintf(stdout, "A) The Sinogram Projection data files should be stored slice by slice in a single\n");
     fprintf(stdout, "   directory. All files within this directory must share a common BaseFileName and\n");
     fprintf(stdout, "   adhere to the following format :\n");
-    fprintf(stdout, "      <ProjectionsBaseFileName>_slice<SliceIndex>.2Dsinodata \n");
+    fprintf(stdout, "      <ProjectionsBaseFileName>_slice<SliceIndex>.2Dsinodata\n");
     fprintf(stdout, "   where \"SliceIndex\" is a non-negative integer indexing each slice and is printed\n");
-    fprintf(stdout, "   with 4 digits. Eg : 0000 to 9999 is a valid descriptor for \"SliceIndex\" \n");
+    fprintf(stdout, "   with a fixed number of digits. Eg. 000 to 999 OR 0000 to 9999 would be valid.\n");
     fprintf(stdout, "B) Similarly, the format for the Sinogram Weights files is :\n");
-    fprintf(stdout, "      <WeightsBaseFileName>_slice<SliceIndex>.2Dweightdata \n");
+    fprintf(stdout, "      <WeightsBaseFileName>_slice<SliceIndex>.2Dweightdata\n");
     fprintf(stdout, "C) Similarly, the Reconstructed (Output) Image is organized slice by slice :\n");
     fprintf(stdout, "      <ImageBaseFileName>_slice<SliceIndex>.2Dimgdata\n\n");
 }
