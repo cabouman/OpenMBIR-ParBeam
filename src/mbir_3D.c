@@ -59,11 +59,14 @@ int main(int argc, char *argv[])
     {   fprintf(stderr, "Error in allocating memory for image through function AllocateImageData3D \n");
         exit(-1);
     }
+
+    /* Allocate and generate recon mask based on ROIRadius--do this before image initialization */
+    ImageReconMask = GenImageReconMask(&(Image.imgparams));
+
     /* Initialize image and reconstruction mask */
     InitValue = reconparams.InitImageValue;
     OutsideROIValue = 0;
-    Initialize_Image(&Image, &cmdline, InitValue);
-    ImageReconMask = GenImageReconMask(&Image,OutsideROIValue);
+    Initialize_Image(&Image, &cmdline, ImageReconMask, InitValue, OutsideROIValue);
     
     /* MBIR - Reconstruction */
     MBIRReconstruct3D(&Image,&sinogram,reconparams,&A,ImageReconMask);
