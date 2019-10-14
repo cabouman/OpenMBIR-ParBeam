@@ -50,12 +50,6 @@ void MBIRReconstruct3D(
     Nxy= Nx*Ny;
     M = sinogram->sinoparams.NViews * sinogram->sinoparams.NChannels ;
     
-    if(sinogram->sinoparams.NSlices != Nz)
-    {
-        fprintf(stderr,"Error in MBIRReconstruct3D: No. of slices in sinogram not equal to no. of slices in image \n");
-        exit(-1);
-    } 
-
     /********************************************/
     /* Forward Projection and Error Calculation */
     /********************************************/
@@ -215,12 +209,6 @@ float MAPCostFunction3D(
 
     Nxy = Nx*Ny;
     
-    if(sinogram->sinoparams.NSlices != Nz)
-    {
-        fprintf(stderr,"Error in MAPCostFunction3D: No. of slices in sinogram not equal to no. of slices in image \n");
-        exit(-1);
-    }    
-
 	nloglike = 0.0;
 
     for (jz = 0; jz < Nz; jz++)

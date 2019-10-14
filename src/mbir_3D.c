@@ -11,7 +11,7 @@
 
 int main(int argc, char *argv[])
 {
-	struct Image3D Image;
+    struct Image3D Image;
     struct Sino3DParallel sinogram;
     struct ReconParamsQGGMRF3D reconparams;
     struct SysMatrix2D A;
@@ -22,11 +22,16 @@ int main(int argc, char *argv[])
                           /* else intialize it to a uniform image with value InitValue */
     float OutsideROIValue;/* Image pixel value outside ROI Radius */
     
-	/* read command line */
-	readCmdLineMBIR(argc, argv, &cmdline);
+    /* read command line */
+    readCmdLineMBIR(argc, argv, &cmdline);
     
     /* read parameters */
-    readSystemParams (&cmdline, &Image.imgparams, &sinogram.sinoparams, &reconparams);
+    readSystemParams(&cmdline, &Image.imgparams, &sinogram.sinoparams, &reconparams);
+
+    /* The image parameters specify the relevant slice range to reconstruct, so re-set the  */
+    /* relevant sinogram parameters so it pulls the correct slices/weights and indexes them consistently */
+    sinogram.sinoparams.NSlices = Image.imgparams.Nz;
+    sinogram.sinoparams.FirstSliceNumber = Image.imgparams.FirstSliceNumber;
     
     /* Read Sinogram and Weights */
     if(AllocateSinoData3DParallel(&sinogram))
