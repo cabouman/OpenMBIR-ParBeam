@@ -7,14 +7,14 @@
 
 
 float ICDStep3D(
-	float **e,  /* e=y-AX */
-	float **w,
+    float **e,  /* e=y-AX */
+    float **w,
     struct SysMatrix2D *A,
-	struct ICDInfo *icd_info)
+    struct ICDInfo *icd_info)
 {
-	int i, n, Nxy, XYPixelIndex, SliceIndex;
+    int i, n, Nxy, XYPixelIndex, SliceIndex;
     struct SparseColumn A_column;
-	float UpdatedVoxelValue;
+    float UpdatedVoxelValue;
 
     Nxy = icd_info->Nxy; /* No. of pixels within a given slice */
     
@@ -25,16 +25,15 @@ float ICDStep3D(
     A_column = A->column[XYPixelIndex]; /* System matrix does not vary with slice for 3-D Parallel beam geometry */
     
     /* Formulate the quadratic surrogate function (with coefficients theta1, theta2) for the local cost function */
-	icd_info->theta1 = 0.0;
-	icd_info->theta2 = 0.0;
-    
-	for (n = 0; n < A_column.Nnonzero; n++)
-	{
-		i = A_column.RowIndex[n] ; /* (View, Detector-Channel) index pertaining to same slice as voxel */
-        
+    icd_info->theta1 = 0.0;
+    icd_info->theta2 = 0.0;
+   
+    for (n = 0; n < A_column.Nnonzero; n++)
+    {
+        i = A_column.RowIndex[n] ; /* (View, Detector-Channel) index pertaining to same slice as voxel */
         icd_info->theta1 -= A_column.Value[n]*w[SliceIndex][i]*e[SliceIndex][i];
         icd_info->theta2 += A_column.Value[n]*w[SliceIndex][i]*A_column.Value[n];
-	}
+    }
    
     /* theta1 and theta2 must be further adjusted according to Prior Model */
     /* Step can be skipped if merely ML estimation (no prior model) is followed rather than MAP estimation */
@@ -43,7 +42,7 @@ float ICDStep3D(
     /* Calculate Updated Pixel Value */
     UpdatedVoxelValue = icd_info->v - (icd_info->theta1/icd_info->theta2) ;
     
-	return UpdatedVoxelValue;
+    return UpdatedVoxelValue;
 }
 
 /* ICD update with the QGGMRF prior model */
@@ -186,10 +185,10 @@ void ExtractNeighbors3D(
 
 /* Update error term e=y-Ax after an ICD update on x */
 void UpdateError3D(
-                   float **e,
-                   struct SysMatrix2D *A,
-                   float diff,
-                   struct ICDInfo *icd_info)
+    float **e,
+    struct SysMatrix2D *A,
+    float diff,
+    struct ICDInfo *icd_info)
 {
     int n, i, XYPixelIndex, SliceIndex;
     int Nxy;
@@ -208,6 +207,5 @@ void UpdateError3D(
         e[SliceIndex][i] -= A->column[XYPixelIndex].Value[n]*diff;
     }
 }
-
 
 

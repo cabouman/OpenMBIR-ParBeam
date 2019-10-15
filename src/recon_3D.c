@@ -50,12 +50,6 @@ void MBIRReconstruct3D(
     Nxy= Nx*Ny;
     M = sinogram->sinoparams.NViews * sinogram->sinoparams.NChannels ;
     
-    if(sinogram->sinoparams.NSlices != Nz)
-    {
-        fprintf(stderr,"Error in MBIRReconstruct3D: No. of slices in sinogram not equal to no. of slices in image \n");
-        exit(-1);
-    } 
-
     /********************************************/
     /* Forward Projection and Error Calculation */
     /********************************************/
@@ -63,9 +57,11 @@ void MBIRReconstruct3D(
     /* Initialize error to zero, since it is first computed as forward-projection Ax */
     for (jz = 0; jz < Nz; jz++)
     for (i = 0; i < M; i++)
-    e[jz][i]=0;
+        e[jz][i]=0;
+
     /* compute Ax (store it in e as of now) */
     forwardProject3D(e, Image, A);
+
     /* Compute the initial error e=y-Ax */
     for (jz = 0; jz < Nz; jz++)
     for (i = 0; i < M; i++)
@@ -84,7 +80,7 @@ void MBIRReconstruct3D(
     /* Order of pixel updates need NOT be raster order, just initialize */
     order = (int *)get_spc(N, sizeof(int));
     for (j = 0; j < N; j++)
-    order[j] = j;
+        order[j] = j;
     
     stop_FLAG = 0;
     start = time(NULL);  /* XW: starting time */
@@ -150,44 +146,35 @@ void MBIRReconstruct3D(
                         TotalVoxelValue += icd_info.v ; /* using previous pixel value here */
                         NumUpdatedVoxels++ ;
                 }
-                
             }
         }
         
-        
-         cost = MAPCostFunction3D(e, Image, sinogram, &reconparams);
-         if(NumUpdatedVoxels>0)
-         {
-           avg_update = TotalValueChange/NumUpdatedVoxels;
-           AvgVoxelValue = TotalVoxelValue/NumUpdatedVoxels;
-           if(AvgVoxelValue>0)
-           ratio = (avg_update/AvgVoxelValue)*100;
-         }
-         else
-         avg_update=0;
+        cost = MAPCostFunction3D(e, Image, sinogram, &reconparams);
+        if(NumUpdatedVoxels>0)
+        {
+            avg_update = TotalValueChange/NumUpdatedVoxels;
+            AvgVoxelValue = TotalVoxelValue/NumUpdatedVoxels;
+            if(AvgVoxelValue>0)
+                ratio = (avg_update/AvgVoxelValue)*100;
+        }
+        else
+            avg_update=0;
         
         fprintf(stdout, "cost = %-15f, Average Update = %f mm^{-1} \n", cost, avg_update);
         
         if (ratio < StopThreshold || NumUpdatedVoxels==0)
-        {
             stop_FLAG = 1;
-        }
     }
     
     fprintf(stdout, "\nTime elapsed in Iterative reconstruction is %f seconds\n", difftime(time(NULL), start));
     
     if (stop_FLAG == 1)
-    {
         fprintf(stdout, "Reached stopping condition.\n");
-    }
     else if (StopThreshold> 0)
-    {
         fprintf(stdout, "WARNING: Didn't reach stopping condition.\n");
-    }
     
     if(AvgVoxelValue>0)
     fprintf(stdout, "Average Update to Average Voxel-Value Ratio = %f %% \n", ratio);
-    
     
     free((void *)order);
 }
@@ -195,73 +182,62 @@ void MBIRReconstruct3D(
 
 /* The function to compute cost function */
 float MAPCostFunction3D(
-	float **e,
+    float **e,
     struct Image3D *Image,
-	struct Sino3DParallel *sinogram,
+    struct Sino3DParallel *sinogram,
     struct ReconParamsQGGMRF3D *reconparams)
 {
-	int i, M, jx, jy, jz, jxy, Nx, Ny, Nz, Nxy, plusx, minusx, plusy, plusz ;
+    int i, M, jx, jy, jz, jxy, Nx, Ny, Nz, Nxy, plusx, minusx, plusy, plusz ;
     float **x ;
     float **w ;
-	float nloglike, nlogprior_nearest, nlogprior_diag, nlogprior_interslice ;
+    float nloglike, nlogprior_nearest, nlogprior_diag, nlogprior_interslice ;
     
     x = Image->image;
     w = sinogram->weight;
     
-	M = sinogram->sinoparams.NViews * sinogram->sinoparams.NChannels ;
-	Nx = Image->imgparams.Nx;
-	Ny = Image->imgparams.Ny;
+    M = sinogram->sinoparams.NViews * sinogram->sinoparams.NChannels ;
+    Nx = Image->imgparams.Nx;
+    Ny = Image->imgparams.Ny;
     Nz = Image->imgparams.Nz; 
-
     Nxy = Nx*Ny;
     
-    if(sinogram->sinoparams.NSlices != Nz)
-    {
-        fprintf(stderr,"Error in MAPCostFunction3D: No. of slices in sinogram not equal to no. of slices in image \n");
-        exit(-1);
-    }    
-
-	nloglike = 0.0;
+    nloglike = 0.0;
 
     for (jz = 0; jz < Nz; jz++)
-	for (i = 0; i < M; i++)
-    nloglike += e[jz][i]*w[jz][i]*e[jz][i];
+    for (i = 0; i < M; i++)
+        nloglike += e[jz][i]*w[jz][i]*e[jz][i];
 
-	nloglike /= 2.0;
-	nlogprior_nearest = 0.0;
-	nlogprior_diag = 0.0;
+    nloglike /= 2.0;
+    nlogprior_nearest = 0.0;
+    nlogprior_diag = 0.0;
     nlogprior_interslice = 0.0;
     
-   for (jz = 0; jz < Nz; jz++)
-  {
-	for (jy = 0; jy < Ny; jy++)
-	{
-		for (jx = 0; jx < Nx; jx++)
-		{
-			plusx = jx + 1;
-			plusx = ((plusx < Nx) ? plusx : 0);
-			minusx = jx - 1;
-			minusx = ((minusx < 0) ? Nx-1 : minusx);
-			plusy = jy + 1;
-			plusy = ((plusy < Ny) ? plusy : 0);
-            plusz = jz + 1;
-            plusz = ((plusz < Nz) ? plusz : 0);
+    for (jz = 0; jz < Nz; jz++)
+    for (jy = 0; jy < Ny; jy++)
+    for (jx = 0; jx < Nx; jx++)
+    {
+        plusx = jx + 1;
+        plusx = ((plusx < Nx) ? plusx : 0);
+        minusx = jx - 1;
+        minusx = ((minusx < 0) ? Nx-1 : minusx);
+        plusy = jy + 1;
+        plusy = ((plusy < Ny) ? plusy : 0);
+        plusz = jz + 1;
+        plusz = ((plusz < Nz) ? plusz : 0);
 
-			jxy = jy*Nx + jx; /* XY pixel Index */
+        jxy = jy*Nx + jx; /* XY pixel Index */
 
-            /* Trick to avoid computing the contribution of pair-wise cliques twice */
-            nlogprior_nearest += QGGMRF_Potential((x[jz][jxy] - x[jz][jy*Nx+plusx]), reconparams);
-            nlogprior_nearest += QGGMRF_Potential((x[jz][jxy] - x[jz][plusy*Nx+jx]),reconparams);
+        /* Trick to avoid computing the contribution of pair-wise cliques twice */
+        nlogprior_nearest += QGGMRF_Potential((x[jz][jxy] - x[jz][jy*Nx+plusx]), reconparams);
+        nlogprior_nearest += QGGMRF_Potential((x[jz][jxy] - x[jz][plusy*Nx+jx]),reconparams);
 
-            nlogprior_diag += QGGMRF_Potential((x[jz][jxy] - x[jz][plusy*Nx+minusx]),reconparams);
-            nlogprior_diag += QGGMRF_Potential((x[jz][jxy] - x[jz][plusy*Nx+plusx]),reconparams);
-            
-            nlogprior_interslice += QGGMRF_Potential((x[jz][jxy] - x[plusz][jxy]),reconparams);
-		}
-	}
-  }
+        nlogprior_diag += QGGMRF_Potential((x[jz][jxy] - x[jz][plusy*Nx+minusx]),reconparams);
+        nlogprior_diag += QGGMRF_Potential((x[jz][jxy] - x[jz][plusy*Nx+plusx]),reconparams);
 
-	return (nloglike + reconparams->b_nearest * nlogprior_nearest + reconparams->b_diag * nlogprior_diag + reconparams->b_interslice * nlogprior_interslice) ;
+        nlogprior_interslice += QGGMRF_Potential((x[jz][jxy] - x[plusz][jxy]),reconparams);
+    }
+
+    return (nloglike + reconparams->b_nearest * nlogprior_nearest + reconparams->b_diag * nlogprior_diag + reconparams->b_interslice * nlogprior_interslice) ;
 }
 
 
@@ -282,8 +258,8 @@ void forwardProject3D(
     
     if(A->Ncolumns != Nxy)
     {
-      fprintf(stderr,"Error in forwardProject3D : dimensions of System Matrix and Image are not compatible \n");
-      exit(-1);
+        fprintf(stderr,"Error in forwardProject3D : dimensions of System Matrix and Image are not compatible \n");
+        exit(-1);
     }
     
 
@@ -298,9 +274,7 @@ void forwardProject3D(
                 AValue = A_column.Value[n];
 
                 for(jz=0;jz<NSlices;jz++)   /* vary slice index */
-                {
-                  AX[jz][k] += AValue*X->image[jz][j] ; /* Voxel index = j+jz*Nxy */
-                }
+                    AX[jz][k] += AValue*X->image[jz][j] ; /* Voxel index = j+jz*Nxy */
             }
         }
     }
