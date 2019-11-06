@@ -37,6 +37,7 @@ void MBIRReconstruct3D(
     char stop_FLAG;
     int *order;
     int NumUpdatedVoxels;
+    float equits=0;
     
     struct ICDInfo icd_info; /* Local Cost Function Information */
     
@@ -90,9 +91,9 @@ void MBIRReconstruct3D(
     /****************************************/
 
     printf("\nStarting Iterative Reconstruction ... \n\n");
-    for (it = 0; ((it < MaxIterations) && (stop_FLAG == 0)); it++)
+    for (it = 0; ((equits < MaxIterations) && (it < 10*MaxIterations) && (stop_FLAG == 0)); it++)
     {
-        fprintf(stdout, "**Iteration %-3d **\n", it+1);  /* it is the current iteration number */
+        //fprintf(stdout, "**Iteration %-3d **\n", it+1);  /* it is the current iteration number */
         
         shuffle(order, N);        /* shuffle the coordinate and update pixels randomly */
                                   /* Random update provides the fastest algorithmic convergence. */
@@ -160,6 +161,8 @@ void MBIRReconstruct3D(
         else
             avg_update=0;
         
+        equits += (float)NumUpdatedVoxels /(Nxy*Nz);
+        fprintf(stdout, "**Iteration %-3d (equit %.1f) **\n", it+1,equits);  /* it is the current iteration number */
         fprintf(stdout, "cost = %-15f, Average Update = %f mm^{-1} \n", cost, avg_update);
         
         if (ratio < StopThreshold || NumUpdatedVoxels==0)
