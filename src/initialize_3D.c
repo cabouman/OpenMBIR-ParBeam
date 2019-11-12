@@ -138,8 +138,9 @@ void readSystemParams  (
     int Ndigits = NumSinoSliceDigits(cmdline->SinoDataFile, sinoparams->FirstSliceNumber);
     if(Ndigits==0)
     {
+        int i;
         fprintf(stderr,"Error: Can't read the first data file. Looking for any one of the following:\n");
-        for(int i=MBIR_MODULAR_MAX_NUMBER_OF_SLICE_DIGITS; i>0; i--)
+        for(i=MBIR_MODULAR_MAX_NUMBER_OF_SLICE_DIGITS; i>0; i--)
             fprintf(stderr,"\t%s_slice%.*d.2Dsinodata\n",cmdline->SinoDataFile, i, sinoparams->FirstSliceNumber);
         exit(-1);
     }

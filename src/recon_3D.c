@@ -37,6 +37,8 @@ void MBIRReconstruct3D(
     char stop_FLAG;
     int *order;
     int NumUpdatedVoxels;
+    float equits=0;
+    int Nmask=0;
     
     struct ICDInfo icd_info; /* Local Cost Function Information */
     
@@ -49,6 +51,11 @@ void MBIRReconstruct3D(
     N  = Nx*Ny*Nz;
     Nxy= Nx*Ny;
     M = sinogram->sinoparams.NViews * sinogram->sinoparams.NChannels ;
+
+    /* Number of voxels in-slice within ROI radius */
+    for(j=0;j<Nxy;j++)
+    if(ImageReconMask[j])
+        Nmask++;
     
     /********************************************/
     /* Forward Projection and Error Calculation */
@@ -65,7 +72,7 @@ void MBIRReconstruct3D(
     /* Compute the initial error e=y-Ax */
     for (jz = 0; jz < Nz; jz++)
     for (i = 0; i < M; i++)
-    e[jz][i] = y[jz][i]-e[jz][i];
+        e[jz][i] = y[jz][i]-e[jz][i];
   
     /****************************************/
     /* Iteration and convergence Parameters */
@@ -90,12 +97,10 @@ void MBIRReconstruct3D(
     /****************************************/
 
     printf("\nStarting Iterative Reconstruction ... \n\n");
-    for (it = 0; ((it < MaxIterations) && (stop_FLAG == 0)); it++)
+    for (it = 0; ((equits < MaxIterations) && (it < 10*MaxIterations) && (stop_FLAG == 0)); it++)
     {
-        fprintf(stdout, "**Iteration %-3d **\n", it+1);  /* it is the current iteration number */
         
-        shuffle(order, N);        /* shuffle the coordinate and update pixels randomly */
-                                  /* Random update provides the fastest algorithmic convergence. */
+        shuffle(order, N);        /* shuffle the coordinate and update pixels randomly for faster convergence */
         
         TotalValueChange = 0.0; /* sum of absolute change in value of all pixels */
         NumUpdatedVoxels=0; /* number of updated pixels */
@@ -103,9 +108,9 @@ void MBIRReconstruct3D(
         
         for (l = 0; l < N; l++)
         {
-            if(i%100==0)
+            if(l%(N/20)==0)  //Update progress approximately every 5%
             {
-                printf("\r\tProgress = %2.f %%", (float)l/N*100.0); fflush(stdout);
+                printf("\rIteration %d -- Progress = %2.f%%",it+1,(float)l/N*100.0); fflush(stdout);
             }
             j = order[l];          /* Voxel index from randomized list */
             XYPixelIndex = j%Nxy ; /* Pixel Index within a given slice */
@@ -160,18 +165,22 @@ void MBIRReconstruct3D(
         else
             avg_update=0;
         
-        fprintf(stdout, "cost = %-15f, Average Update = %f mm^{-1} \n", cost, avg_update);
+        equits += (float)NumUpdatedVoxels /(Nmask*Nz);
+        fprintf(stdout,"\rIteration %-2d, cost=%-15f, AvgUpdate=%f mm^-1\n",it+1,cost,avg_update);
         
         if (ratio < StopThreshold || NumUpdatedVoxels==0)
             stop_FLAG = 1;
     }
     
-    fprintf(stdout, "\nTime elapsed in Iterative reconstruction is %f seconds\n", difftime(time(NULL), start));
-    
+    fprintf(stdout,"\n");
+
     if (stop_FLAG == 1)
-        fprintf(stdout, "Reached stopping condition.\n");
+        fprintf(stdout,"Reached stopping condition.\n");
     else if (StopThreshold> 0)
-        fprintf(stdout, "WARNING: Didn't reach stopping condition.\n");
+        fprintf(stdout,"WARNING: Didn't reach stopping condition.\n");
+
+    fprintf(stdout,"Reconstruction time: %.3f seconds\n",difftime(time(NULL),start));
+    fprintf(stdout,"Equivalent iterations: %.1f\n",equits);
     
     if(AvgVoxelValue>0)
     fprintf(stdout, "Average Update to Average Voxel-Value Ratio = %f %% \n", ratio);
