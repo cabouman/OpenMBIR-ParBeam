@@ -12,7 +12,7 @@ struct ICDInfo
 	float theta1; /* Quadratic surrogate function parameters -theta1 and theta2 */
 	float theta2;
     
-    struct ReconParamsQGGMRF3D Rparams; /* Reconstruction Parameters (includes prior parameters) */
+    struct ReconParams Rparams; /* Reconstruction Parameters (includes prior parameters) */
     
     int Nxy;    /* Number of pixels within a given slice */
     int NViewsTimesNChannels;   /* Number of projection measurements per slice */
@@ -22,7 +22,7 @@ float ICDStep3D(float **e, float **w, struct SysMatrix2D *A, struct ICDInfo *icd
 
 /* Prior-specific, independent of neighborhood */
 float QGGMRF_SurrogateCoeff(float delta, struct ICDInfo *icd_info);
-float QGGMRF_Potential(float delta, struct ReconParamsQGGMRF3D *Rparams);
+float QGGMRF_Potential(float delta, struct ReconParams *Rparams);
 /* Prior and neighborhood specific */
 void  QGGMRF3D_UpdateICDParams(struct ICDInfo *icd_info);
 /* Only neighborhood specific */

@@ -28,8 +28,8 @@ void readSystemParams(
 	struct CmdLineMBIR *cmdline,
 	struct ImageParams3D *imgparams,
 	struct SinoParams3DParallel *sinoparams,
-	struct ReconParamsQGGMRF3D *reconparams);
-void NormalizePriorWeights3D(struct ReconParamsQGGMRF3D *reconparams);
+	struct ReconParams *reconparams);
+void NormalizePriorWeights3D(struct ReconParams *reconparams);
 void readCmdLineMBIR(int argc, char *argv[], struct CmdLineMBIR *cmdline);
 void PrintCmdLineUsage(char *ExecFileName);
 int CmdLineHelp(char *string);

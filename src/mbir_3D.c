@@ -13,7 +13,7 @@ int main(int argc, char *argv[])
 {
     struct Image3D Image;
     struct Sino3DParallel sinogram;
-    struct ReconParamsQGGMRF3D reconparams;
+    struct ReconParams reconparams;
     struct SysMatrix2D A;
     struct CmdLineMBIR cmdline;
     

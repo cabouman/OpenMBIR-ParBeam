@@ -88,7 +88,7 @@ char *GenImageReconMask(struct ImageParams3D *imgparams)
 /* Normalize weights to sum to 1 */
 /* Only neighborhood specific */
 void NormalizePriorWeights3D(
-                         struct ReconParamsQGGMRF3D *reconparams)
+                         struct ReconParams *reconparams)
 {
     double sum;
     
@@ -105,7 +105,7 @@ void readSystemParams  (
                          struct CmdLineMBIR *cmdline,
                          struct ImageParams3D *imgparams,
                          struct SinoParams3DParallel *sinoparams,
-                         struct ReconParamsQGGMRF3D *reconparams)
+                         struct ReconParams *reconparams)
 {
     //printf("\nReading Image, Sinogram and Reconstruction Parameters ... \n");
     

@@ -3,6 +3,7 @@
 #include <stdlib.h>
 #include <string.h>
 #include <libgen.h>  /* for dirname */
+#include <math.h>
 
 #include "allocate.h"
 #include "MBIRModularDefs.h"
@@ -306,7 +307,7 @@ int ReadImageParams3D(
 
 
 /* Print QGGMRF reconstruction parameters */
-void printReconParamsQGGMRF3D(struct ReconParamsQGGMRF3D *reconparams)
+void printReconParamsQGGMRF3D(struct ReconParams *reconparams)
 {
     fprintf(stdout, "RECONSTRUCTION/PRIOR PARAMETERS:\n");
     fprintf(stdout, " - Q-GGMRF Prior Parameter, q                            = %f\n", reconparams->p);
@@ -327,7 +328,7 @@ void printReconParamsQGGMRF3D(struct ReconParamsQGGMRF3D *reconparams)
 /* Returns 0 if no error occurs */
 int ReadReconParamsQGGMRF3D(
 	char *basename,				/* Source base filename, i.e. <basename>.reconparams */
-	struct ReconParamsQGGMRF3D *reconparams)  /* Reconstruction parameters data structure */
+	struct ReconParams *reconparams)  /* Reconstruction parameters data structure */
 {
 	FILE *fp;
 	char fname[200];
@@ -504,6 +505,11 @@ int ReadReconParamsQGGMRF3D(
 		fprintf(stderr,"Error in %s: Need (p <= q) for convexity. (p<q for strict convexity)\n",fname);
 		exit(-1);
 	}
+
+	/* calculate derived parameters */
+	reconparams->pow_sigmaX_p = pow(reconparams->SigmaX,reconparams->p);
+	reconparams->pow_sigmaX_q = pow(reconparams->SigmaX,reconparams->q);
+	reconparams->pow_T_qmp    = pow(reconparams->T,reconparams->q - reconparams->p);
 
 	return(0);
 }

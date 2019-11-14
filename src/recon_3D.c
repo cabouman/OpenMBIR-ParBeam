@@ -20,7 +20,7 @@
 void MBIRReconstruct3D(
                        struct Image3D *Image,
                        struct Sino3DParallel *sinogram,
-                       struct ReconParamsQGGMRF3D reconparams,
+                       struct ReconParams reconparams,
                        struct SysMatrix2D *A,
                        char *ImageReconMask )
 {
@@ -194,7 +194,7 @@ float MAPCostFunction3D(
     float **e,
     struct Image3D *Image,
     struct Sino3DParallel *sinogram,
-    struct ReconParamsQGGMRF3D *reconparams)
+    struct ReconParams *reconparams)
 {
     int i, M, jx, jy, jz, jxy, Nx, Ny, Nz, Nxy, plusx, minusx, plusy, plusz ;
     float **x ;
