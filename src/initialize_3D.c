@@ -109,30 +109,45 @@ void readSystemParams  (
 {
     //printf("\nReading Image, Sinogram and Reconstruction Parameters ... \n");
     
-    if(ReadImageParams3D(cmdline->ImageParamsFile, imgparams))
-      {
-        fprintf(stdout,"Error in reading image parameters \n");
+    if(ReadImageParams3D(cmdline->ImageParamsFile, imgparams)) {
+        fprintf(stderr,"Error in reading image parameters \n");
         exit(-1);
-      }
-    if(ReadSinoParams3DParallel(cmdline->SinoParamsFile, sinoparams))
-      {
-        fprintf(stdout,"Error in reading sinogram parameters \n");
-        exit(-1);
-      }
-    if(ReadReconParamsQGGMRF3D(cmdline->ReconParamsFile ,reconparams))
-      {
-        fprintf(stdout,"Error in reading reconstruction parameters \n");
-        exit(-1);
-      }
-
-    /* Tentatively initialize weights. Remove once this is read in directly from params file */
-    NormalizePriorWeights3D(reconparams);
-    
-    /* Print paramters */
+    }
     printImageParams3D(imgparams);
+
+    if(ReadSinoParams3DParallel(cmdline->SinoParamsFile, sinoparams)) {
+        fprintf(stderr,"Error in reading sinogram parameters \n");
+        exit(-1);
+    }
     printSinoParams3DParallel(sinoparams);
-    printReconParamsQGGMRF3D(reconparams);
+
+    /* Read Recon parameters */
+    if(ReadReconParams(cmdline->ReconParamsFile,reconparams))
+    {
+        fprintf(stderr,"Error in reading reconstruction parameters\n");
+        exit(-1);
+    }
+
+    if(cmdline->ReconType == MBIR_MODULAR_RECONTYPE_QGGMRF_3D)
+    {
+        NormalizePriorWeights3D(reconparams);
+        printReconParamsQGGMRF3D(reconparams);
+    }
+    if(cmdline->ReconType == MBIR_MODULAR_RECONTYPE_PandP)
+    {
+        printReconParamsPandP(reconparams);
+        fprintf(stdout,"\nPlug and Play support coming soon!\n");
+        exit(-1);
+    }
+
     fprintf(stdout,"\n");
+
+    if(reconparams->ReconType != cmdline->ReconType)
+    {
+        fprintf(stdout,"Warning** \"PriorModel\" field in reconparams doesn't agree with command line\n");
+        fprintf(stdout,"Warning** syntax. Using the specified recon parameters anyway.\n");
+        reconparams->ReconType = cmdline->ReconType;
+    }
 
     /* Determine and SET number of slice index digits in data files */
     int Ndigits = NumSinoSliceDigits(cmdline->SinoDataFile, sinoparams->FirstSliceNumber);
@@ -155,7 +170,9 @@ void readCmdLineMBIR(int argc, char *argv[], struct CmdLineMBIR *cmdline)
 {
     char ch;
     
+    /* set defaults */
     strcpy(cmdline->InitImageDataFile, "NA"); /* default */
+    cmdline->ReconType = MBIR_MODULAR_RECONTYPE_QGGMRF_3D;
     
     if(argc<15)
     {
@@ -221,9 +238,7 @@ void readCmdLineMBIR(int argc, char *argv[], struct CmdLineMBIR *cmdline)
             case 'p':
             {
                 sprintf(cmdline->ProxMapImageDataFile, "%s", optarg);
-                fprintf(stderr,"Error: -p option -> Proximal Map prior yet to be implemented\n");
-                PrintCmdLineUsage(argv[0]);
-                exit(-1);
+                cmdline->ReconType = MBIR_MODULAR_RECONTYPE_PandP;
                 break;
             }
             // Reserve this for verbose-mode flag
