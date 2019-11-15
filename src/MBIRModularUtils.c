@@ -527,6 +527,7 @@ int ReadReconParams(
 	reconparams->pow_sigmaX_p = pow(reconparams->SigmaX,reconparams->p);
 	reconparams->pow_sigmaX_q = pow(reconparams->SigmaX,reconparams->q);
 	reconparams->pow_T_qmp    = pow(reconparams->T,reconparams->q - reconparams->p);
+	reconparams->SigmaXsq = reconparams->SigmaX * reconparams->SigmaX;
 
 	return(0);
 }

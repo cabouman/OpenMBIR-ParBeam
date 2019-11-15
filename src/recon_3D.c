@@ -79,7 +79,6 @@ void MBIRReconstruct3D(
     /****************************************/
     icd_info.Rparams = reconparams;
     icd_info.Nxy = Nxy;
-    icd_info.NViewsTimesNChannels = sinogram->sinoparams.NViews * sinogram->sinoparams.NChannels ;
     
     MaxIterations = reconparams.MaxIterations;
     StopThreshold = reconparams.StopThreshold;
@@ -121,23 +120,36 @@ void MBIRReconstruct3D(
                 /*****ICD - Local Cost Function Parameters *******/
                 icd_info.v = x[SliceIndex][XYPixelIndex];  /* store the voxel value before update */
                 icd_info.VoxelIndex = j;                    /* Index of voxel to be updated */
-                ExtractNeighbors3D(&icd_info, Image);  /* extract voxel neighorborhood */
-                
+
                 /* Skip update only if Pixel=0, PixelNeighborhood=0 and System-matrix column for that pixel is a 0 vector */
                 zero_skip_FLAG = 0;
-                      
-                /* Here use if(fabs(a) <= EPSILON)  instead of if(a==0.0) when a is float, where EPSILON is a very small float close to 0 */
-                if (fabs(icd_info.v) <= EPSILON && A->column[XYPixelIndex].Nnonzero==0)
+
+                if(reconparams.ReconType == MBIR_MODULAR_RECONTYPE_QGGMRF_3D)
                 {
-                    zero_skip_FLAG = 1;	/* If all 11 pixels in the neighborhood system is zero. Then skip this pixel update */
-                    for (k = 0; k < 10; k++)
+                    ExtractNeighbors3D(&icd_info, Image);  /* extract voxel neighorborhood */
+
+                    /* use if(fabs(a)<EPSILON) instead of if(a==0.0) when a is float, where EPSILON is a very small float close to 0 */
+                    if (fabs(icd_info.v) <= EPSILON && A->column[XYPixelIndex].Nnonzero==0)
                     {
-                        if (icd_info.neighbors[k] > EPSILON) /* is neighbor non-zero */
+                        zero_skip_FLAG = 1;	/* If all 11 pixels in the neighborhood system is zero. Then skip this pixel update */
+                        for (k = 0; k < 10; k++)
                         {
-                            zero_skip_FLAG = 0;
-                            break;
+                            if (icd_info.neighbors[k] > EPSILON) /* is neighbor non-zero */
+                            {
+                                zero_skip_FLAG = 0;
+                                break;
+                            }
                         }
                     }
+                }
+                else if(reconparams.ReconType == MBIR_MODULAR_RECONTYPE_PandP)
+                {
+                    icd_info.proxv = reconparams.proximalmap[SliceIndex][XYPixelIndex];
+                }
+                else
+                {
+                    fprintf(stderr,"Error** Unrecognized ReconType in ICD update\n");
+                    exit(-1);
                 }
                 
                 if (zero_skip_FLAG == 0)

@@ -102,6 +102,10 @@ struct ReconParams
   double pow_sigmaX_p;    /* pow(sigmaX,p) */
   double pow_sigmaX_q;    /* pow(sigmaX,q) */
   double pow_T_qmp;       /* pow(T,q-p) */
+  /* Proximal map prior for Plug & Play */
+  //double SigmaX;        /* sigma_x parameter (mm-1) (same field name already included for QGGMRF above) */
+  double SigmaXsq;        /* derived parameter: SigmaX^2 */
+  float **proximalmap;    /* ptr to 3D proximal map image; here to carry it to the ICD update */
 };
 
 

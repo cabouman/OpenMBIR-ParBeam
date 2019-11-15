@@ -136,16 +136,14 @@ void readSystemParams  (
     if(cmdline->ReconType == MBIR_MODULAR_RECONTYPE_PandP)
     {
         printReconParamsPandP(reconparams);
-        fprintf(stdout,"\nPlug and Play support coming soon!\n");
-        exit(-1);
     }
 
     fprintf(stdout,"\n");
 
     if(reconparams->ReconType != cmdline->ReconType)
     {
-        fprintf(stdout,"Warning** \"PriorModel\" field in reconparams doesn't agree with command line\n");
-        fprintf(stdout,"Warning** syntax. Using the specified recon parameters anyway.\n");
+        fprintf(stdout,"Warning** \"PriorModel\" field in reconparams file doesn't agree with the\n");
+        fprintf(stdout,"Warning** command line says you want to do. Proceeding anyway.\n");
         reconparams->ReconType = cmdline->ReconType;
     }
 
@@ -269,7 +267,7 @@ void PrintCmdLineUsage(char *ExecFileName)
     fprintf(stdout, "   -r <OutputImageBaseFileName>\n\n");
     fprintf(stdout, "Additional options:\n");
     fprintf(stdout, "   -t <InitialImageBaseFileName>   # Read initial image\n");
-    fprintf(stdout, "   -p <ProxMapImageBaseFileName>   # Read/run Proximal Map prior (TBD)\n\n");
+    fprintf(stdout, "   -p <ProxMapImageBaseFileName>   # Read/run Proximal Map prior\n\n");
     fprintf(stdout, "Note : The necessary extensions for certain input files are mentioned above within\n");
     fprintf(stdout, "a \"[]\" symbol above, however the extensions should be OMITTED in the command line\n\n");
     fprintf(stdout, "The following instructions pertain to the -s, -w and -r options:\n");

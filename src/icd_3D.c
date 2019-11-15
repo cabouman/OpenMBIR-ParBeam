@@ -1,5 +1,6 @@
 
 #include <stdio.h>
+#include <stdlib.h>
 #include <math.h>
 
 #include "MBIRModularDefs.h"
@@ -14,7 +15,7 @@ float ICDStep3D(
 {
     int i, n, Nxy, XYPixelIndex, SliceIndex;
     struct SparseColumn A_column;
-    float UpdatedVoxelValue;
+    float UpdatedVoxelValue,step;
 
     Nxy = icd_info->Nxy; /* No. of pixels within a given slice */
     
@@ -37,17 +38,41 @@ float ICDStep3D(
    
     /* theta1 and theta2 must be further adjusted according to Prior Model */
     /* Step can be skipped if merely ML estimation (no prior model) is followed rather than MAP estimation */
-    QGGMRF3D_UpdateICDParams(icd_info);
+    if(icd_info->Rparams.ReconType == MBIR_MODULAR_RECONTYPE_QGGMRF_3D)
+    {
+        step = QGGMRF3D_Update(icd_info);
+    }
+    else if(icd_info->Rparams.ReconType == MBIR_MODULAR_RECONTYPE_PandP)
+    {
+        step = PandP_Update(icd_info);
+    }
+    else
+    {
+        fprintf(stderr,"Error** Unrecognized ReconType in ICD update\n");
+        exit(-1);
+    }
 	
     /* Calculate Updated Pixel Value */
-    UpdatedVoxelValue = icd_info->v - (icd_info->theta1/icd_info->theta2) ;
+    UpdatedVoxelValue = icd_info->v + step;
     
     return UpdatedVoxelValue;
 }
 
+/* Plug & Play update w/ proximal map prior */
+float PandP_Update(struct ICDInfo *icd_info)
+{
+    float theta1 = icd_info->theta1;
+    float theta2 = icd_info->theta2;
+    float v = icd_info->v;
+    float proxv = icd_info->proxv;
+    float SigmaXsq = icd_info->Rparams.SigmaXsq;
+
+    return( -(SigmaXsq*theta1 + v - proxv) / (SigmaXsq*theta2 + 1.0) );
+}
+
 /* ICD update with the QGGMRF prior model */
 /* Prior and neighborhood specific */
-void QGGMRF3D_UpdateICDParams(struct ICDInfo *icd_info)
+float QGGMRF3D_Update(struct ICDInfo *icd_info)
 {
     int j; /* Neighbor relative position to Pixel being updated */
     float delta, SurrogateCoeff;
@@ -83,6 +108,8 @@ void QGGMRF3D_UpdateICDParams(struct ICDInfo *icd_info)
     
     icd_info->theta1 +=  (b_nearest * sum1_Nearest + b_diag * sum1_Diag + b_interslice * sum1_Interslice) ;
     icd_info->theta2 +=  (b_nearest * sum2_Nearest + b_diag * sum2_Diag + b_interslice * sum2_Interslice) ;
+
+    return(-icd_info->theta1 / icd_info->theta2);
 }
 
 
