@@ -4,7 +4,7 @@
 #include "MBIRModularDefs.h"
 
 struct CmdLineMBIR{
-    
+    char ReconType;		/* 1:QGGMRF, 2:PandP */
     char SinoParamsFile[200];
     char ImageParamsFile[200];
     char ReconParamsFile[200];
@@ -15,7 +15,6 @@ struct CmdLineMBIR{
     char InitImageDataFile[200]; /* optional input */
     char ProxMapImageDataFile[200]; /* optional input */
 };
-
 
 void Initialize_Image(
 	struct Image3D *Image,
@@ -28,8 +27,8 @@ void readSystemParams(
 	struct CmdLineMBIR *cmdline,
 	struct ImageParams3D *imgparams,
 	struct SinoParams3DParallel *sinoparams,
-	struct ReconParamsQGGMRF3D *reconparams);
-void NormalizePriorWeights3D(struct ReconParamsQGGMRF3D *reconparams);
+	struct ReconParams *reconparams);
+void NormalizePriorWeights3D(struct ReconParams *reconparams);
 void readCmdLineMBIR(int argc, char *argv[], struct CmdLineMBIR *cmdline);
 void PrintCmdLineUsage(char *ExecFileName);
 int CmdLineHelp(char *string);

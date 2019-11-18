@@ -1,5 +1,6 @@
 
 #include <stdio.h>
+#include <stdlib.h>
 #include <math.h>
 
 #include "MBIRModularDefs.h"
@@ -14,7 +15,7 @@ float ICDStep3D(
 {
     int i, n, Nxy, XYPixelIndex, SliceIndex;
     struct SparseColumn A_column;
-    float UpdatedVoxelValue;
+    float UpdatedVoxelValue,step;
 
     Nxy = icd_info->Nxy; /* No. of pixels within a given slice */
     
@@ -37,17 +38,41 @@ float ICDStep3D(
    
     /* theta1 and theta2 must be further adjusted according to Prior Model */
     /* Step can be skipped if merely ML estimation (no prior model) is followed rather than MAP estimation */
-    QGGMRF3D_UpdateICDParams(icd_info);
+    if(icd_info->Rparams.ReconType == MBIR_MODULAR_RECONTYPE_QGGMRF_3D)
+    {
+        step = QGGMRF3D_Update(icd_info);
+    }
+    else if(icd_info->Rparams.ReconType == MBIR_MODULAR_RECONTYPE_PandP)
+    {
+        step = PandP_Update(icd_info);
+    }
+    else
+    {
+        fprintf(stderr,"Error** Unrecognized ReconType in ICD update\n");
+        exit(-1);
+    }
 	
     /* Calculate Updated Pixel Value */
-    UpdatedVoxelValue = icd_info->v - (icd_info->theta1/icd_info->theta2) ;
+    UpdatedVoxelValue = icd_info->v + step;
     
     return UpdatedVoxelValue;
 }
 
+/* Plug & Play update w/ proximal map prior */
+float PandP_Update(struct ICDInfo *icd_info)
+{
+    float theta1 = icd_info->theta1;
+    float theta2 = icd_info->theta2;
+    float v = icd_info->v;
+    float proxv = icd_info->proxv;
+    float SigmaXsq = icd_info->Rparams.SigmaXsq;
+
+    return( -(SigmaXsq*theta1 + v - proxv) / (SigmaXsq*theta2 + 1.0) );
+}
+
 /* ICD update with the QGGMRF prior model */
 /* Prior and neighborhood specific */
-void QGGMRF3D_UpdateICDParams(struct ICDInfo *icd_info)
+float QGGMRF3D_Update(struct ICDInfo *icd_info)
 {
     int j; /* Neighbor relative position to Pixel being updated */
     float delta, SurrogateCoeff;
@@ -83,11 +108,13 @@ void QGGMRF3D_UpdateICDParams(struct ICDInfo *icd_info)
     
     icd_info->theta1 +=  (b_nearest * sum1_Nearest + b_diag * sum1_Diag + b_interslice * sum1_Interslice) ;
     icd_info->theta2 +=  (b_nearest * sum2_Nearest + b_diag * sum2_Diag + b_interslice * sum2_Interslice) ;
+
+    return(-icd_info->theta1 / icd_info->theta2);
 }
 
 
 /* the potential function of the QGGMRF prior model.  p << q <= 2 */
-float QGGMRF_Potential(float delta, struct ReconParamsQGGMRF3D *Rparams)
+float QGGMRF_Potential(float delta, struct ReconParams *Rparams)
 {
     float p, q, T, SigmaX;
     float temp, GGMRF_Pot;
@@ -97,7 +124,8 @@ float QGGMRF_Potential(float delta, struct ReconParamsQGGMRF3D *Rparams)
     T = Rparams->T;
     SigmaX = Rparams->SigmaX;
     
-    GGMRF_Pot = pow(fabs(delta),p)/(p*pow(SigmaX,p));
+    //GGMRF_Pot = pow(fabs(delta),p)/(p*pow(SigmaX,p));
+    GGMRF_Pot = pow(fabs(delta),p)/(p*Rparams->pow_sigmaX_p);
     temp = pow(fabs(delta/(T*SigmaX)), q-p);
     
     return ( GGMRF_Pot * temp/(1.0+temp) );
@@ -116,22 +144,28 @@ float QGGMRF_SurrogateCoeff(float delta, struct ICDInfo *icd_info)
 {
     float p, q, T, SigmaX, qmp;
     float num, denom, temp;
+    float pow_sigmaX_p, pow_sigmaX_q, pow_T_qmp;
     
     p = icd_info->Rparams.p;
     q = icd_info->Rparams.q;
     T = icd_info->Rparams.T;
     SigmaX = icd_info->Rparams.SigmaX;
     qmp = q - p;
+    pow_sigmaX_p = icd_info->Rparams.pow_sigmaX_p;
+    pow_sigmaX_q = icd_info->Rparams.pow_sigmaX_q;
+    pow_T_qmp = icd_info->Rparams.pow_T_qmp;
     
     /* Refer to Chapter 7, MBIR Textbook by Prof Bouman, Page 151 */
     /* Table on Quadratic surrogate functions for different prior models */
     
     if (delta == 0.0)
-    return 2.0/( p*pow(SigmaX,q)*pow(T,qmp) ) ; /* rho"(0) */
+    	return 2.0/( p*pow_sigmaX_q*pow_T_qmp ) ; /* rho"(0) */
+    //return 2.0/( p*pow(SigmaX,q)*pow(T,qmp) ) ; /* rho"(0) */
     
     temp = pow(fabs(delta/(T*SigmaX)), qmp);
     num = q/p + temp;
-    denom = pow(SigmaX,p) * (1.0+temp) * (1.0+temp);
+    //denom = pow(SigmaX,p) * (1.0+temp) * (1.0+temp);
+    denom = pow_sigmaX_p * (1.0+temp) * (1.0+temp);
     num = num * pow(fabs(delta),p-2) * temp;
     
     return num/denom;

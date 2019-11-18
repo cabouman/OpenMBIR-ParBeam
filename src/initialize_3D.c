@@ -88,7 +88,7 @@ char *GenImageReconMask(struct ImageParams3D *imgparams)
 /* Normalize weights to sum to 1 */
 /* Only neighborhood specific */
 void NormalizePriorWeights3D(
-                         struct ReconParamsQGGMRF3D *reconparams)
+                         struct ReconParams *reconparams)
 {
     double sum;
     
@@ -105,34 +105,47 @@ void readSystemParams  (
                          struct CmdLineMBIR *cmdline,
                          struct ImageParams3D *imgparams,
                          struct SinoParams3DParallel *sinoparams,
-                         struct ReconParamsQGGMRF3D *reconparams)
+                         struct ReconParams *reconparams)
 {
     //printf("\nReading Image, Sinogram and Reconstruction Parameters ... \n");
     
-    if(ReadImageParams3D(cmdline->ImageParamsFile, imgparams))
-      {
-        fprintf(stdout,"Error in reading image parameters \n");
+    if(ReadImageParams3D(cmdline->ImageParamsFile, imgparams)) {
+        fprintf(stderr,"Error in reading image parameters \n");
         exit(-1);
-      }
-    if(ReadSinoParams3DParallel(cmdline->SinoParamsFile, sinoparams))
-      {
-        fprintf(stdout,"Error in reading sinogram parameters \n");
-        exit(-1);
-      }
-    if(ReadReconParamsQGGMRF3D(cmdline->ReconParamsFile ,reconparams))
-      {
-        fprintf(stdout,"Error in reading reconstruction parameters \n");
-        exit(-1);
-      }
-
-    /* Tentatively initialize weights. Remove once this is read in directly from params file */
-    NormalizePriorWeights3D(reconparams);
-    
-    /* Print paramters */
+    }
     printImageParams3D(imgparams);
+
+    if(ReadSinoParams3DParallel(cmdline->SinoParamsFile, sinoparams)) {
+        fprintf(stderr,"Error in reading sinogram parameters \n");
+        exit(-1);
+    }
     printSinoParams3DParallel(sinoparams);
-    printReconParamsQGGMRF3D(reconparams);
+
+    /* Read Recon parameters */
+    if(ReadReconParams(cmdline->ReconParamsFile,reconparams))
+    {
+        fprintf(stderr,"Error in reading reconstruction parameters\n");
+        exit(-1);
+    }
+
+    if(cmdline->ReconType == MBIR_MODULAR_RECONTYPE_QGGMRF_3D)
+    {
+        NormalizePriorWeights3D(reconparams);
+        printReconParamsQGGMRF3D(reconparams);
+    }
+    if(cmdline->ReconType == MBIR_MODULAR_RECONTYPE_PandP)
+    {
+        printReconParamsPandP(reconparams);
+    }
+
     fprintf(stdout,"\n");
+
+    if(reconparams->ReconType != cmdline->ReconType)
+    {
+        fprintf(stdout,"Warning** \"PriorModel\" field in reconparams file doesn't agree with the\n");
+        fprintf(stdout,"Warning** command line says you want to do. Proceeding anyway.\n");
+        reconparams->ReconType = cmdline->ReconType;
+    }
 
     /* Determine and SET number of slice index digits in data files */
     int Ndigits = NumSinoSliceDigits(cmdline->SinoDataFile, sinoparams->FirstSliceNumber);
@@ -155,7 +168,9 @@ void readCmdLineMBIR(int argc, char *argv[], struct CmdLineMBIR *cmdline)
 {
     char ch;
     
+    /* set defaults */
     strcpy(cmdline->InitImageDataFile, "NA"); /* default */
+    cmdline->ReconType = MBIR_MODULAR_RECONTYPE_QGGMRF_3D;
     
     if(argc<15)
     {
@@ -221,9 +236,7 @@ void readCmdLineMBIR(int argc, char *argv[], struct CmdLineMBIR *cmdline)
             case 'p':
             {
                 sprintf(cmdline->ProxMapImageDataFile, "%s", optarg);
-                fprintf(stderr,"Error: -p option -> Proximal Map prior yet to be implemented\n");
-                PrintCmdLineUsage(argv[0]);
-                exit(-1);
+                cmdline->ReconType = MBIR_MODULAR_RECONTYPE_PandP;
                 break;
             }
             // Reserve this for verbose-mode flag
@@ -254,7 +267,7 @@ void PrintCmdLineUsage(char *ExecFileName)
     fprintf(stdout, "   -r <OutputImageBaseFileName>\n\n");
     fprintf(stdout, "Additional options:\n");
     fprintf(stdout, "   -t <InitialImageBaseFileName>   # Read initial image\n");
-    fprintf(stdout, "   -p <ProxMapImageBaseFileName>   # Read/run Proximal Map prior (TBD)\n\n");
+    fprintf(stdout, "   -p <ProxMapImageBaseFileName>   # Read/run Proximal Map prior\n\n");
     fprintf(stdout, "Note : The necessary extensions for certain input files are mentioned above within\n");
     fprintf(stdout, "a \"[]\" symbol above, however the extensions should be OMITTED in the command line\n\n");
     fprintf(stdout, "The following instructions pertain to the -s, -w and -r options:\n");

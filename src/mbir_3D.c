@@ -12,8 +12,9 @@
 int main(int argc, char *argv[])
 {
     struct Image3D Image;
+    struct Image3D ProxMap;
     struct Sino3DParallel sinogram;
-    struct ReconParamsQGGMRF3D reconparams;
+    struct ReconParams reconparams;
     struct SysMatrix2D A;
     struct CmdLineMBIR cmdline;
     
@@ -45,6 +46,19 @@ int main(int argc, char *argv[])
     if(ReadWeights3D(cmdline.SinoWeightsFile, &sinogram))
     {   fprintf(stderr, "Error in reading sinogram weights from file %s through function ReadWeights3D \n", cmdline.SinoWeightsFile);
         exit(-1);
+    }
+
+    /* Read Proximal map if necessary */
+    if(cmdline.ReconType == MBIR_MODULAR_RECONTYPE_PandP)
+    {
+        ProxMap.imgparams.Nx = Image.imgparams.Nx;
+        ProxMap.imgparams.Ny = Image.imgparams.Ny;
+        ProxMap.imgparams.Nz = Image.imgparams.Nz;
+        ProxMap.imgparams.FirstSliceNumber = Image.imgparams.FirstSliceNumber;
+        ProxMap.imgparams.NumSliceDigits = Image.imgparams.NumSliceDigits;
+        AllocateImageData3D(&ProxMap);
+        ReadImage3D(cmdline.ProxMapImageDataFile,&ProxMap);
+        reconparams.proximalmap = ProxMap.image;  // **ptr to proximal map image
     }
     
     /* Read System Matrix */
@@ -78,7 +92,7 @@ int main(int argc, char *argv[])
         exit(-1);
     }
         
-	/* free image, sinogram and system matrix memory allocation */
+    /* free image, sinogram and system matrix memory allocation */
     if(FreeImageData3D(&Image))
     {  fprintf(stderr, "Error image memory could not be freed through function FreeImageData3D \n");
         exit(-1);
@@ -91,6 +105,8 @@ int main(int argc, char *argv[])
     {  fprintf(stderr, "Error System Matrix memory could not be freed through function FreeSysMatrix3D \n");
         exit(-1);
     }
+    if(cmdline.ReconType == MBIR_MODULAR_RECONTYPE_PandP)
+       FreeImageData3D(&ProxMap);
     
     free((void *)ImageReconMask);
     

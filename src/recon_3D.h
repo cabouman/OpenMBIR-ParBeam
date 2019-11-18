@@ -3,9 +3,9 @@
 
 #include "MBIRModularDefs.h"
 
-void MBIRReconstruct3D(struct Image3D *Image, struct Sino3DParallel *sinogram, struct ReconParamsQGGMRF3D reconparams, struct SysMatrix2D *A, char *ImageReconMask);
+void MBIRReconstruct3D(struct Image3D *Image, struct Sino3DParallel *sinogram, struct ReconParams reconparams, struct SysMatrix2D *A, char *ImageReconMask);
 
-float MAPCostFunction3D(float **e, struct Image3D *Image, struct Sino3DParallel *sinogram, struct ReconParamsQGGMRF3D *reconparams);
+float MAPCostFunction3D(float **e, struct Image3D *Image, struct Sino3DParallel *sinogram, struct ReconParams *reconparams);
 
 void forwardProject3D(float **AX, struct Image3D *X, struct SysMatrix2D *A); /* Compute A-matrix times X */
 
