@@ -6,4 +6,4 @@ DeltaChannel: 0.0000625
 CenterOffset: 23.0
 DeltaSlice: 0.0000625
 FirstSliceNumber: 700
-ViewAngleList: afrl.ViewAngleList.txt
+ViewAngleList: xradia.ViewAngleList.txt

@@ -3,7 +3,7 @@
 cd "$(dirname $0)"
 
 BIN="../../bin"
-Fname="afrl"
+Fname="xradia"
 
 
 ../../IO-Utils/displayImage.py --imgparams $Fname --images recon/$Fname
