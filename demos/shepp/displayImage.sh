@@ -2,8 +2,6 @@
 
 cd "$(dirname $0)"
 
-BIN="../../bin"
 Fname="shepp"
 
-
-../../IO-Utils/displayImage.py --imgparams $Fname --images recon/$Fname
+../../IO-Utils/displayImage.py --imgparams ${Fname}_old --images recon/$Fname
