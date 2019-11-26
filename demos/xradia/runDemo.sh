@@ -3,7 +3,7 @@
 cd "$(dirname $0)"
 
 BIN="../../bin"
-Fname="afrl"
+Fname="xradia"
 
 #Generate System Matrix
 #<Executable File Name>  -i <InputFileName>[.imgparams] -j <InputFileName>[.sinoparams] -m <OutputFileName>[.2Dsysmatrix]

@@ -77,7 +77,9 @@ def readImages(fRoot_imgparams, fRoot_images):
     fName_imgparams = fRoot_imgparams + '.imgparams'
     imgparams = readImgParams(fRoot_imgparams + '.imgparams')
 
-    fPattern = f'{fRoot_images}_slice[0-9]*.2Dimgdata'
+    # Note "f" formatting available in Python 3.6 or later
+    #fPattern = f'{fRoot_images}_slice[0-9]*.2Dimgdata'
+    fPattern = fRoot_images + '_slice[0-9]*.2Dimgdata'
     x, fNames = read2DFilePattern(fPattern, imgparams['Nx'], imgparams['Ny'])
 
 
