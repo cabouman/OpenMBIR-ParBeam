@@ -1,6 +1,9 @@
 # OpenMBIR 
 BASELINE MBIR RECONSTRUCTION SOFTWARE FOR 2D and 3D PARALLEL-BEAM CT
 
+This is a reference implementation of MBIR, but it is not parallel or optimized for speed.
+A much faster version of this parallel beam MBIR algorithm is available at:
+  https://github.com/HPImaging/sv-mbirct
 
 ## Software Requirements
 1. gcc compiler
