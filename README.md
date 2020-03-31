@@ -5,6 +5,8 @@ This is a reference implementation of MBIR, but it is not parallel or optimized 
 A much faster version of this parallel beam MBIR algorithm is available at:
   https://github.com/HPImaging/sv-mbirct
 
+For other OpenMBIR packages see: https://github.com/cabouman/OpenMBIR-Index
+
 ## Software Requirements
 1. gcc compiler
 2. OpenMP API
