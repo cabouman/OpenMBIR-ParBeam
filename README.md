@@ -1,4 +1,4 @@
-# OpenMBIR 
+# OpenMBIR-ParBeam 
 BASELINE MBIR RECONSTRUCTION SOFTWARE FOR 2D and 3D PARALLEL-BEAM CT
 
 This is a reference implementation of MBIR, but it is not parallel or optimized for speed.
