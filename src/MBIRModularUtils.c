@@ -34,9 +34,9 @@ int ReadSinoParams3DParallel(
 	struct SinoParams3DParallel *sinoparams)  /* Sinogram params data structure */
 {
 	FILE *fp;
-	char fname[200];
+	char fname[1024];
 	char tag[200], fieldname[200], fieldval_s[200], *ptr;
-	char AngleListFname[200]=" ";
+	char AngleListFname[1024]=" ";
 	int i, Nlines;
 	char Geometry_flag=0;
 
@@ -67,7 +67,8 @@ int ReadSinoParams3DParallel(
 	{
 		strcpy(fieldname," ");
 		strcpy(fieldval_s," ");
-		fgets(tag, 200, fp);
+		if(fgets(tag, 200, fp) == NULL)
+			return(-1);
 		ptr=strtok(tag,":\n\r");	// including the newline will keep it out of the last token
 		if(ptr!=NULL) {
 			//strcpy(fieldname,ptr);
@@ -197,7 +198,7 @@ int ReadImageParams3D(
 	struct ImageParams3D *imgparams)  /* Image params data structure */
 {
 	FILE *fp;
-	char fname[200];
+	char fname[1024];
 	char tag[200], fieldname[200], fieldval_s[200], *ptr;
 	int i, Nlines;
 
@@ -228,7 +229,8 @@ int ReadImageParams3D(
 	{
 		strcpy(fieldname," ");
 		strcpy(fieldval_s," ");
-		fgets(tag, 200, fp);
+		if(fgets(tag, 200, fp) == NULL)
+			return(-1);
 		ptr=strtok(tag,":\n\r");	// including the newline will keep it out of the last token
 		if(ptr!=NULL) {
 			//strcpy(fieldname,ptr);
@@ -315,7 +317,7 @@ void printReconParamsQGGMRF3D(struct ReconParams *reconparams)
     fprintf(stdout, " - Q-GGMRF Prior Parameter, p                            = %f\n", reconparams->q);
     fprintf(stdout, " - Q-GGMRF Prior Parameter, T                            = %f\n", reconparams->T);
     fprintf(stdout, " - Prior Regularization parameter, SigmaX                = %.7f (mm^-1)\n", reconparams->SigmaX);
-    fprintf(stdout, " - Scaling for weight matrix, SigmaY (W <- W/SigmaY^2)   = %.7f (mm^-1)\n", reconparams->SigmaY);
+    fprintf(stdout, " - Scaling for sino weights, SigmaY (W=exp(-y)/SigmaY^2) = %.7f (mm^-1)\n", reconparams->SigmaY);
     fprintf(stdout, " - Prior weight for nearest neighbors within slice       = %.7f\n", reconparams->b_nearest);
     fprintf(stdout, " - Prior weight for diagonal neighbors within slice      = %.7f\n", reconparams->b_diag);
     fprintf(stdout, " - Prior weight for nearest neighbors in adjacent slices = %.7f\n", reconparams->b_interslice);
@@ -330,7 +332,7 @@ void printReconParamsPandP(struct ReconParams *reconparams)
     fprintf(stdout, "RECONSTRUCTION/PRIOR PARAMETERS:\n");
     fprintf(stdout, " - Prior Type                                            = Plug & Play\n");
     fprintf(stdout, " - Regularization parameter for Proximal Map, SigmaX     = %.7f (mm^-1)\n", reconparams->SigmaX);
-    fprintf(stdout, " - Scaling for weight matrix, SigmaY (W <- W/SigmaY^2)   = %.7f (mm^-1)\n", reconparams->SigmaY);
+    fprintf(stdout, " - Scaling for sino weights, SigmaY (W=exp(-y)/SigmaY^2) = %.7f (mm^-1)\n", reconparams->SigmaY);
     fprintf(stdout, " - Stop threshold for convergence                        = %.7f %%\n", reconparams->StopThreshold);
     fprintf(stdout, " - Maximum number of ICD iterations                      = %d\n", reconparams->MaxIterations);
     fprintf(stdout, " - Positivity constraint flag                            = %d\n", reconparams->Positivity);
@@ -343,7 +345,7 @@ int ReadReconParams(
 	struct ReconParams *reconparams)  /* Reconstruction parameters data structure */
 {
 	FILE *fp;
-	char fname[200];
+	char fname[1024];
 	char tag[200], fieldname[200], fieldval_s[200], *ptr;
 	double fieldval_f;
 	int fieldval_d;
@@ -365,6 +367,7 @@ int ReadReconParams(
 	reconparams->T=0.1;
 	reconparams->SigmaX=0.02;
 	reconparams->SigmaY=1.0;
+	reconparams->weightType=1;
 
 	strcpy(fname,basename);
 	strcat(fname,".reconparams");
@@ -384,7 +387,8 @@ int ReadReconParams(
 	{
 		strcpy(fieldname," ");
 		strcpy(fieldval_s," ");
-		fgets(tag, 200, fp);
+		if(fgets(tag, 200, fp) == NULL)
+			return(-1);
 		ptr=strtok(tag,":\n\r");	// including the newline will keep it out of the last token
 		if(ptr!=NULL) {
 			//strcpy(fieldname,ptr);
@@ -456,6 +460,14 @@ int ReadReconParams(
 				fprintf(stderr,"Warning in %s: SigmaY parameter should be positive. Reverting to default.\n",fname);
 			else
 				reconparams->SigmaY = fieldval_f;
+		}
+		else if(strcmp(fieldname,"weightType")==0)
+		{
+			sscanf(fieldval_s,"%d",&(fieldval_d));
+			if((fieldval_d < 0) || (fieldval_d > 2))
+				fprintf(stderr,"Warning in %s: Valid weightType is 0, 1, or 2. Reverting to default.\n",fname);
+			else
+				reconparams->weightType = fieldval_d;
 		}
 		else if(strcmp(fieldname,"b_nearest")==0)
 		{
@@ -591,7 +603,7 @@ int ReadSinoData3DParallel(
     char *basename,	/* Source base filename, i.e. <basename>_slice<Index>.2Dsinodata for given index range */
     struct Sino3DParallel *sinogram)  /* Sinogram data+params data structure */
 {
-    char fname[200];
+    char fname[1024];
     int i,NSlices,FirstSliceNumber,M,exitcode;
     
     NSlices = sinogram->sinoparams.NSlices;
@@ -623,7 +635,7 @@ int ReadWeights3D(
 	char *basename,		/* Source base filename, i.e. <basename>_slice<Index>.2Dweightdata for given index range */
 	struct Sino3DParallel *sinogram)  /* Sinogram data+params data structure */
 {
-    char fname[200];
+    char fname[1024];
     int i,NSlices,FirstSliceNumber,M,exitcode;
 
     NSlices = sinogram->sinoparams.NSlices;
@@ -654,7 +666,7 @@ int WriteSino3DParallel(
     char *basename,	/* Input: Writes sinogram data to <basename>_slice<n>.2Dsinodata for given slice range */
     struct Sino3DParallel *sinogram)  /* Input: Sinogran parameters and data */
 {
-    char fname[200];
+    char fname[1024];
     int i,NSlices,FirstSliceNumber,M,exitcode;
 
     NSlices = sinogram->sinoparams.NSlices;
@@ -685,7 +697,7 @@ int WriteWeights3D(
     char *basename,	/* Destination base filename, i.e. <basename>_slice<Index>.2Dweightdata for given index range */
     struct Sino3DParallel *sinogram)  /* Sinogram data+params data structure */
 {
-    char fname[200];
+    char fname[1024];
     int i,NSlices,FirstSliceNumber,M,exitcode;
 
     NSlices = sinogram->sinoparams.NSlices;
@@ -740,7 +752,7 @@ int ReadImage3D(
     char *basename,	/* Source base filename, i.e. <basename>_slice<Index>.2Dimgdata for given index range */
     struct Image3D *Image)  /* Image data+params data structure */
 {
-    char fname[200];
+    char fname[1024];
     int i,Nz,FirstSliceNumber,M,exitcode;
     
     Nz = Image->imgparams.Nz;
@@ -770,7 +782,7 @@ int WriteImage3D(
     char *basename,	/* Destination base filename, i.e. <basename>_slice<Index>.2Dimgdata for given index range */
     struct Image3D *Image)  /* Image data+params data structure */
 {
-    char fname[200];
+    char fname[1024];
     int i,Nz,FirstSliceNumber,M,exitcode;
     
     Nz = Image->imgparams.Nz;
@@ -842,7 +854,11 @@ int ReadSysMatrix2D(
     
     for (i = 0; i < Ncolumns; i++)
     {
-        fread(&Nnonzero, sizeof(int), 1, fp);
+        if(fread(&Nnonzero, sizeof(int), 1, fp) != 1)
+        {
+            fprintf(stderr, "ERROR in ReadSysMatrix2D: file terminated early %s.\n", fname);
+            exit(-1);
+        }
         A->column[i].Nnonzero = Nnonzero;
         
         if(Nnonzero > 0)
@@ -967,7 +983,7 @@ int FreeImageData2D(struct Image2D *Image)
 int NumSinoSliceDigits(char *basename, int slice)
 {
     FILE *fp;
-    char fname[200];
+    char fname[1024];
     int Ndigits = MBIR_MODULAR_MAX_NUMBER_OF_SLICE_DIGITS;
 
     while(Ndigits > 0)
@@ -983,5 +999,40 @@ int NumSinoSliceDigits(char *basename, int slice)
     }
     return(Ndigits);
 }
+
+
+/* Compute sinogram weights */
+void ComputeSinoWeights(
+	struct Sino3DParallel sinogram,
+	struct ReconParams reconparams)
+{
+    int i,j;
+    int NSlices = sinogram.sinoparams.NSlices;
+    int M = sinogram.sinoparams.NViews * sinogram.sinoparams.NChannels;
+    float ** y = sinogram.sino;
+    float ** w = sinogram.weight;
+    float SigmaYsq = reconparams.SigmaY * reconparams.SigmaY;
+
+    if(reconparams.weightType==2)
+    {
+        for(i=0;i<NSlices;i++)
+        for(j=0;j<M;j++)
+            w[i][j] = expf(-y[i][j]/2.0f)/SigmaYsq;
+    }
+    else if(reconparams.weightType==1)
+    {
+        for(i=0;i<NSlices;i++)
+        for(j=0;j<M;j++)
+            w[i][j] = expf(-y[i][j])/SigmaYsq;
+    }
+    else
+    {
+        for(i=0;i<NSlices;i++)
+        for(j=0;j<M;j++)
+            w[i][j] = 1.0f/SigmaYsq;
+    }
+
+}
+
 
 
