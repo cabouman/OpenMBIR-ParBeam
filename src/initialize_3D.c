@@ -41,13 +41,12 @@ void Initialize_Image(
 /* Allocate and generate Image Reconstruction mask */
 char *GenImageReconMask(struct ImageParams3D *imgparams)
 {
-    int jx, jy, jz, Nx, Ny, Nz;
+    int jx, jy, Nx, Ny;
     float x_0, y_0, Deltaxy, x, y, yy, ROIRadius, R_sq, R_sq_max;
     char *ImageReconMask;
     
     Nx = imgparams->Nx;
     Ny = imgparams->Ny;
-    Nz = imgparams->Nz;
     Deltaxy = imgparams->Deltaxy;
     ROIRadius = imgparams->ROIRadius;
     x_0 = -(Nx-1)*Deltaxy/2;
