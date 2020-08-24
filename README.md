@@ -25,9 +25,9 @@ For other OpenMBIR packages see: https://github.com/cabouman/OpenMBIR-Index
 3) Run the demos
    * In the `demos` folder there are fast and slow 2D and 3D demos
    * To run a demo execute the respective `runDemo.sh` script.
-   * To display the result run the `displayResult.sh` script.
+   * To display the result run the `displayImage.sh` script.
    
-   The `displayResult.sh` script makes use of the python IO Utilities in `IO-Utils`. You can use these utilities to read the images into a python numpy array.
+   The `displayImage.sh` script makes use of the python IO Utilities in `IO-Utils`. You can use these utilities to read the images into a python numpy array.
 
 
 ## Reconstructing Your Own Data
