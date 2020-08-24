@@ -1,37 +1,24 @@
-CC=gcc
-FLAGS=-Wall -pedantic
+CC = gcc
 
+CFLAGS := -std=c11
+CFLAGS := $(CFLAGS) -O3
+CFLAGS := $(CFLAGS) -Wall
 
-bin=../bin
-
-UTILS=allocate.o MBIRModularUtils.o
-SRC_Gen_SysMatrix_3D = A_comp_3D.o Gen_SysMatrix_3D.o
-SRC_MBIR_3D = icd_3D.o initialize_3D.o recon_3D.o mbir_3D.o
-
-
-# --- meta labels -------------------------------------------------
-
-all: main
-	rm -f *.o
-
-main: utils Gen_SysMatrix_3D mbir_3D
+all: mbir_3D Gen_SysMatrix_3D clean
 
 clean:
-	rm -f *.o $(bin)/*
+	rm *.o
 
-# --- linking -------------------------------------------------
+#OBJ = allocate.o MBIRModularUtils.o A_comp_3D.o icd_3D.o initialize_3D.o recon_3D.o 
+OBJ = allocate.o MBIRModularUtils.o
 
-Gen_SysMatrix_3D:  utils
-	$(CC) $(FLAGS) $(UTILS) $(SRC_Gen_SysMatrix_3D) -o $(bin)/Gen_SysMatrix_3D -lm
+mbir_3D: mbir_3D.o icd_3D.o initialize_3D.o recon_3D.o $(OBJ)
+	$(CC) $(CFLAGS) $^ -o $@ -lm
+	mv $@ ../bin
 
-mbir_3D:  utils
-	$(CC) $(FLAGS) $(UTILS) $(SRC_MBIR_3D) -o $(bin)/mbir_3D -lm
+Gen_SysMatrix_3D: Gen_SysMatrix_3D.o A_comp_3D.o $(OBJ)
+	$(CC) $(CFLAGS) $^ -o $@ -lm
+	mv $@ ../bin
 
-# --- compiling -------------------------------------------------
-
-utils: $(UTILS) $(SRC_Gen_SysMatrix_3D) $(SRC_MBIR_3D)
-	
-
-
-
-
+#%.o: %.c
+#	$(CC) -c $(CFLAGS) $< -o $@
